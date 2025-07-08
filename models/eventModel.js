@@ -1,9 +1,35 @@
-const { sql, poolPromise } = require('../config/db');
+const { poolPromise } = require("../db");
 
-async function getAllEvents() {
+const fetchAllEvents = async () => {
   const pool = await poolPromise;
-  const result = await pool.request().query('SELECT * FROM events');
+  const result = await pool.request().query("SELECT * FROM events");
   return result.recordset;
-}
+};
 
-module.exports = { getAllEvents };
+const fetchEventById = async (eventId) => {
+  const pool = await poolPromise;
+  const result = await pool
+    .request()
+    .input("eventId", eventId)
+    .query("SELECT * FROM events WHERE event_id = @eventId");
+  return result.recordset[0];
+};
+
+const insertRsvp = async (userId, eventId, status) => {
+  const pool = await poolPromise;
+  await pool
+    .request()
+    .input("userId", userId)
+    .input("eventId", eventId)
+    .input("status", status)
+    .query(
+      `INSERT INTO rsvps (user_id, event_id, status)
+       VALUES (@userId, @eventId, @status)`
+    );
+};
+
+module.exports = {
+  fetchAllEvents,
+  fetchEventById,
+  insertRsvp,
+};

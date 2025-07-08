@@ -18,21 +18,21 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Register route files here
 const eventRoutes = require("./routes/eventRoutes");
-const authRoutes = require("./routes/authRoutes");
-const medicationRoutes = require("./routes/medicationRoutes");
-const facilityRoutes = require("./routes/facilityRoutes");
-const chatRoutes = require("./routes/chatRoutes");
-const appointmentRoutes = require("./routes/appointmentRoutes");
-const accessibilityRoutes = require("./routes/accessibilityRoutes");
+// const authRoutes = require("./routes/authRoutes");
+// const medicationRoutes = require("./routes/medicationRoutes");
+// const facilityRoutes = require("./routes/facilityRoutes");
+// const chatRoutes = require("./routes/chatRoutes");
+// const appointmentRoutes = require("./routes/appointmentRoutes");
+// const accessibilityRoutes = require("./routes/accessibilityRoutes");
 
 // Mount all routes under API prefixes
 app.use("/api/events", eventRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/medications", medicationRoutes);
-app.use("/api/facilities", facilityRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/appointments", appointmentRoutes);
-app.use("/api/accessibility", accessibilityRoutes);
+// app.use("/api/auth", authRoutes);
+// app.use("/api/medications", medicationRoutes);
+// app.use("/api/facilities", facilityRoutes);
+// app.use("/api/chat", chatRoutes);
+// app.use("/api/appointments", appointmentRoutes);
+// app.use("/api/accessibility", accessibilityRoutes);
 
 // Test route (optional)
 app.get("/", (req, res) => {
