@@ -15,9 +15,10 @@ const config = {
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
-    console.log('Connected to MSSQL');
+    console.log('✅ Connected to MSSQL');
     return pool;
   })
-  .catch(err => console.error('DB connection failed:', err));
-
-module.exports = { sql, poolPromise };
+  .catch(err => {
+    console.error('❌ DB connection failed:', err.message);
+    return null; // <-- don't return undefined
+  });
