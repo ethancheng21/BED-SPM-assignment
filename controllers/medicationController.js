@@ -1,45 +1,27 @@
-const db = require("../db");
+const Medication = require("../models/medicationModel");
 
 exports.createMedication = async (req, res) => {
-  const { user_id, name, dosage, schedule_time, instructions } = req.body;
-
-  console.log("Received data for medication:", req.body); // ✅ NEW: log input
-
   try {
-    await db.query(
-      `INSERT INTO medications (user_id, name, dosage, schedule_time, instructions)
-       VALUES (@user_id, @name, @dosage, @schedule_time, @instructions)`,
-      { user_id, name, dosage, schedule_time, instructions }
-    );
-
+    await Medication.insert(req.body);
     res.status(201).json({ message: "Medication added" });
   } catch (err) {
-    console.error("❌ Medication insert error:", err); // ✅ NEW: log full error
+    console.error("❌ Medication insert error:", err.message);
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-
 exports.getMedicationsByUser = async (req, res) => {
-  const { userId } = req.params;
   try {
-    const result = await db.query(`
-      SELECT * FROM medications WHERE user_id = @userId
-    `, { userId });
-    
-    console.log("DB Result:", result); // ← TEMP LOG
+    const result = await Medication.getByUserId(req.params.userId);
     res.json(result.recordset);
   } catch (err) {
-    console.error("ERROR:", err); // ← SEE ERROR IN TERMINAL
     res.status(500).json({ error: err.message });
   }
 };
 
-
 exports.deleteMedication = async (req, res) => {
-  const { id } = req.params;
   try {
-    await db.query(`DELETE FROM medications WHERE medication_id = @id`, { id });
+    await Medication.deleteById(req.params.id);
     res.json({ message: "Deleted" });
   } catch (err) {
     res.status(500).json({ error: err.message });
