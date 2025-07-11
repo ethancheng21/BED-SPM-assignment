@@ -20,5 +20,11 @@ const poolPromise = new sql.ConnectionPool(config)
   })
   .catch(err => {
     console.error('❌ DB connection failed:', err.message);
-    return null; // <-- don't return undefined
+    return null; // Prevents undefined crash
   });
+
+// ✅ EXPORT HERE
+module.exports = {
+  sql,
+  poolPromise
+};
