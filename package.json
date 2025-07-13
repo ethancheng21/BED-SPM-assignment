@@ -16,10 +16,10 @@
     "url": "https://github.com/ethancheng21/BED-SPM-assignment/issues"
   },
   "homepage": "https://github.com/ethancheng21/BED-SPM-assignment#readme",
-  "description": "",
   "dependencies": {
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
     "mssql": "^11.0.1"
-  }
+  },
+  "description": ""
 }
