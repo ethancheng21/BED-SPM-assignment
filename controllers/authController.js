@@ -6,6 +6,7 @@ exports.register = async (req, res) => {
 
   try {
     const pool = await poolPromise;
+    if (!pool) throw new Error("Database connection failed.");
 
     await pool.request()
       .input("name", sql.VarChar(100), name)
@@ -33,6 +34,7 @@ exports.login = async (req, res) => {
 
   try {
     const pool = await poolPromise;
+    if (!pool) throw new Error("Database connection failed.");
 
     const result = await pool.request()
       .input("email", sql.VarChar(100), email)
@@ -64,6 +66,7 @@ exports.getProfile = async (req, res) => {
 
   try {
     const pool = await poolPromise;
+    if (!pool) throw new Error("Database connection failed.");
 
     const result = await pool.request()
       .input("userId", sql.Int, userId)
@@ -93,6 +96,7 @@ exports.updateProfile = async (req, res) => {
 
   try {
     const pool = await poolPromise;
+    if (!pool) throw new Error("Database connection failed.");
 
     await pool.request()
       .input("userId", sql.Int, userId)
