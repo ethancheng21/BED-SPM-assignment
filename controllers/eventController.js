@@ -23,18 +23,15 @@ const getEventById = async (req, res) => {
 
 const rsvpToEvent = async (req, res) => {
   const eventId = req.params.id;
-  const { userId, status } = req.body;
-
-  if (!userId || !status) {
-    return res.status(400).json({ message: "Missing userId or status" });
-  }
+  const { userId } = req.body;
 
   try {
-    await eventModel.insertRsvp(userId, eventId, status);
-    res.status(201).json({ message: "RSVP saved to database." });
+    const defaultStatus = "going";
+    await eventModel.insertRsvp(userId, eventId, defaultStatus);
+    res.status(201).json({ message: "RSVP successful" });
   } catch (err) {
-    console.error("RSVP insert error:", err);
-    res.status(500).json({ error: "Failed to insert RSVP" });
+    console.error("RSVP error:", err.message);
+    res.status(500).json({ error: "Failed to RSVP for event" });
   }
 };
 
@@ -45,8 +42,9 @@ const cancelRsvp = async (req, res) => {
 
   try {
     await eventModel.deleteRsvp(userId, eventId);
-    res.status(200).json({ message: "RSVP cancelled successfully" });
+    res.status(200).json({ message: "RSVP cancelled" });
   } catch (err) {
+    console.error("Cancel RSVP error:", err.message);
     res.status(500).json({ error: "Failed to cancel RSVP" });
   }
 };
