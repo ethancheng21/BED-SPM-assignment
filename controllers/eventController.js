@@ -38,8 +38,23 @@ const rsvpToEvent = async (req, res) => {
   }
 };
 
+
+const cancelRsvp = async (req, res) => {
+  const eventId = req.params.id;
+  const { userId } = req.body;
+
+  try {
+    await eventModel.deleteRsvp(userId, eventId);
+    res.status(200).json({ message: "RSVP cancelled successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to cancel RSVP" });
+  }
+};
+
+
 module.exports = {
   getAllEvents,
   getEventById,
   rsvpToEvent,
+  cancelRsvp,
 };

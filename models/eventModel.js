@@ -28,8 +28,19 @@ const insertRsvp = async (userId, eventId, status) => {
     );
 };
 
+const deleteRsvp = async (userId, eventId) => {
+  const pool = await poolPromise;
+  await pool
+    .request()
+    .input("userId", userId)
+    .input("eventId", eventId)
+    .query("DELETE FROM rsvps WHERE user_id = @userId AND event_id = @eventId");
+};
+
+
 module.exports = {
   fetchAllEvents,
   fetchEventById,
   insertRsvp,
+  deleteRsvp,
 };
