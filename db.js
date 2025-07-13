@@ -1,4 +1,4 @@
-const sql = require('mssql');
+const sql = require("mssql");
 
 // Debug: Show loaded env variables (optional - remove for production)
 console.log("Loaded DB config:", {
@@ -21,39 +21,12 @@ const config = {
   },
 };
 
-// Initialize the connection pool safely
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
-    console.log('✅ Connected to MSSQL');
+    console.log('Connected to MSSQL');
     return pool;
   })
-  .catch(err => {
-    console.error('❌ DB connection failed:', err.message);
-    throw err; // ❗ Don't return null — crash and show real error
-  });
+  .catch(err => console.error('DB connection failed:', err));
 
-// Query helper
-const query = async (sqlQuery, params = {}) => {
-  const pool = await poolPromise;
-  const request = pool.request();
-
-  // Apply all input parameters
-  for (let key in params) {
-    request.input(key, params[key]);
-  }
-
-  return await request.query(sqlQuery);
-};
-
-// Direct request helper (manual use)
-const request = async () => {
-  const pool = await poolPromise;
-  return pool.request();
-};
-
-module.exports = {
-  query,
-  request,
-  poolPromise
-};
+module.exports = { sql, poolPromise };

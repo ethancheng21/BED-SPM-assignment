@@ -1,21 +1,13 @@
-const jwt = require("jsonwebtoken");
+// Very simple header-based auth middleware
+function checkUserLoggedIn(req, res, next) {
+  const userId = req.headers.userid;
 
-const verifyToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ message: "No token provided" });
+  if (!userId) {
+    return res.status(401).json({ message: "Missing userId in headers" });
   }
 
-  const token = authHeader.split(" ")[1];
+  req.userId = parseInt(userId);
+  next();
+}
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // contains userId, role, etc.
-    next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid or expired token" });
-  }
-};
-
-module.exports = { verifyToken };
+module.exports = { checkUserLoggedIn };
