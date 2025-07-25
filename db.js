@@ -1,5 +1,14 @@
 const sql = require("mssql");
 
+// Debug: Show loaded env variables (optional - remove for production)
+console.log("Loaded DB config:", {
+  user: process.env.DB_USER,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
+  port: process.env.DB_PORT
+});
+
+// SQL Server config
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -7,42 +16,17 @@ const config = {
   database: process.env.DB_DATABASE,
   port: parseInt(process.env.DB_PORT),
   options: {
-    encrypt: false,
+    encrypt: false, // Use true if you're using Azure
     trustServerCertificate: true,
   },
 };
 
-// Create and connect pool
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
-    console.log("✅ Connected to MSSQL");
+    console.log('Connected to MSSQL');
     return pool;
   })
-  .catch(err => {
-    console.error("❌ DB connection failed:", err.message);
-    return null;
-  });
+  .catch(err => console.error('DB connection failed:', err));
 
-// Common helper to run queries with parameters (for medication.js)
-async function query(sqlQuery, params = {}) {
-  const pool = await poolPromise;
-  const request = pool.request();
-  for (const key in params) {
-    request.input(key, params[key]);
-  }
-  return request.query(sqlQuery);
-}
-
-// Export
-module.exports = {
-  sql,
-  poolPromise,
-  query,
-  request: async () => (await poolPromise).request(),
-};
-
-  module.exports = {
-  sql,
-  poolPromise,
-};
+module.exports = { sql, poolPromise };
