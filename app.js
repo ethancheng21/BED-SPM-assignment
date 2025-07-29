@@ -25,16 +25,19 @@ const eventRoutes = require("./routes/eventRoutes");
 const authRoutes = require("./routes/authRoutes");
 // const medicationRoutes = require("./routes/medicationRoutes");
 const facilityRoutes = require("./routes/facilityRoutes");
-// const chatRoutes = require("./routes/chatRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 // const appointmentRoutes = require("./routes/appointmentRoutes");
 // const accessibilityRoutes = require("./routes/accessibilityRoutes");
+const userRoutes = require("./routes/userRoutes");
 
+
+app.use("/api", userRoutes);
 app.use('/api/onemap', onemapRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
 // app.use("/api/medications", medicationRoutes);
 app.use("/api/facilities", facilityRoutes);
-// app.use("/api/chat", chatRoutes);
+app.use("/api/chat", chatRoutes);
 // app.use("/api/appointments", appointmentRoutes);
 // app.use("/api/accessibility", accessibilityRoutes);
 

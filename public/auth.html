@@ -5,28 +5,64 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login / Register</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background-color: #f1f1f1;
+      background-color: #f0f2f5;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       height: 100vh;
     }
+
+    header {
+      width: 100%;
+      background-color: white;
+      border-bottom: 1px solid #eee;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    .logo span {
+      color: orange;
+    }
+
     .auth-container {
+      margin-top: 2rem;
       background-color: white;
       padding: 2rem;
       border-radius: 8px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      width: 320px;
+      width: 350px;
     }
+
     h2 {
       text-align: center;
+      color: #005b96;
+      margin-bottom: 1rem;
     }
+
     label {
       display: block;
       margin: 10px 0 5px;
+      font-weight: bold;
+      color: #333;
     }
+
     input {
       width: 100%;
       padding: 8px;
@@ -34,32 +70,70 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
+
     button {
       width: 100%;
       padding: 10px;
-      background-color: #0077cc;
+      background-color: orange;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 20px;
       font-weight: bold;
+      font-size: 1rem;
       cursor: pointer;
+      transition: background 0.2s;
     }
+
+    button:hover {
+      background-color: #e69500;
+    }
+
     .toggle-link {
       margin-top: 10px;
       text-align: center;
       cursor: pointer;
-      color: #0077cc;
+      color: #005b96;
       text-decoration: underline;
     }
+
     .error, .success {
       margin-top: 10px;
       text-align: center;
     }
-    .error { color: red; }
-    .success { color: green; }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .home-link {
+      display: inline-block;
+      color: #005b96;
+      text-decoration: none;
+      font-weight: bold;
+      border: 1px solid #005b96;
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .home-link:hover {
+      background-color: #005b96;
+      color: white;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Logo Header -->
+  <header>
+    <div class="logo">Lions<span>Befrienders</span></div>
+  </header>
+
+  <!-- Auth Box -->
   <div class="auth-container">
     <h2 id="formTitle">Login</h2>
 
@@ -90,6 +164,11 @@
 
     <div class="toggle-link" onclick="toggleForm()">Don't have an account? Register</div>
     <div id="message" class="error"></div>
+
+    <!-- Return to Home Button -->
+    <div style="text-align: center; margin-top: 1.5rem;">
+      <a href="home.html" class="home-link">← Return to Home</a>
+    </div>
   </div>
 
   <script>
@@ -125,7 +204,7 @@
         messageDiv.textContent = "Login successful! Redirecting...";
         localStorage.setItem("userId", result.userId);
         setTimeout(() => {
-          window.location.href = "/home1.html"; // ✅ Redirect to home1.html
+          window.location.href = "/home1.html";
         }, 1000);
       } else {
         messageDiv.className = "error";
@@ -156,5 +235,6 @@
       }
     });
   </script>
+
 </body>
 </html>
