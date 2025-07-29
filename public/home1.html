@@ -5,164 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Lions Befrienders</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Arial, sans-serif;
-      background: #fff;
-      color: #111;
-    }
-
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid #eee;
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #005b96;
-    }
-
-    nav {
-      display: flex;
-      gap: 1.5rem;
-      align-items: center;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-    }
-
-    .action-btn {
-      background-color: orange;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      text-decoration: none;
-      margin-left: 0.5rem;
-    }
-
-    .banner {
-      margin: 20px auto;
-      max-width: 1000px;
-      text-align: center;
-    }
-
-    .banner img {
-      width: 100%;
-      border-radius: 8px;
-    }
-
-    .services {
-      max-width: 1000px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-
-    .services h2 {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-    }
-
-    .service-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-    }
-
-    .service-item {
-      background: #f4f4f4;
-      padding: 1rem;
-      border-radius: 10px;
-      font-weight: bold;
-      color: #002855;
-      cursor: pointer;
-      text-align: center;
-      transition: background 0.2s;
-    }
-
-    .service-item:hover {
-      background: #e0e0e0;
-    }
-
-    .more-link {
-      margin-top: 1rem;
-      display: block;
-      text-align: right;
-      color: orange;
-      font-weight: bold;
-    }
-
-    /* FAQ section */
-    .faq-section {
-      background-color: #e0f7f9;
-      padding: 3rem 1rem;
-    }
-
-    .faq-section h2 {
-      text-align: center;
-      font-size: 2rem;
-      margin-bottom: 2rem;
-      color: #002855;
-    }
-
-    .faq-container {
-      max-width: 800px;
-      margin: 0 auto;
-      display: grid;
-      gap: 1rem;
-    }
-
-    .faq-item {
-      background: white;
-      border-radius: 10px;
-      padding: 1rem 1.5rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .faq-item:hover {
-      background-color: #f9f9f9;
-    }
-
-    .faq-question {
-      font-weight: bold;
-      color: #002855;
-    }
-
-    .faq-answer {
-      margin-top: 0.5rem;
-      color: #333;
-      display: none;
-    }
-
-    .faq-item.open .faq-answer {
-      display: block;
-    }
-
-    .scroll-to-faq {
-      display: block;
-      text-align: right;
-      font-weight: bold;
-      color: #0077cc;
-      margin-top: 1.5rem;
-      cursor: pointer;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+    body { font-family: Arial, sans-serif; background: #fff; color: #111; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #eee; }
+    .logo { font-size: 1.8rem; font-weight: bold; color: #005b96; }
+    nav { display: flex; gap: 1.5rem; align-items: center; }
+    nav a { text-decoration: none; color: #333; font-weight: 500; }
+    .action-btn { background-color: orange; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: bold; text-decoration: none; margin-left: 0.5rem; }
+    .banner { margin: 20px auto; max-width: 1000px; text-align: center; }
+    .banner img { width: 100%; border-radius: 8px; }
+    .services { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    .services h2 { font-size: 2rem; margin-bottom: 1rem; }
+    .service-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .service-item { background: #f4f4f4; padding: 1rem; border-radius: 10px; font-weight: bold; color: #002855; cursor: pointer; text-align: center; transition: background 0.2s; }
+    .service-item:hover { background: #e0e0e0; }
+    .more-link { margin-top: 1rem; display: block; text-align: right; color: orange; font-weight: bold; }
+    .programmes { max-width: 1000px; margin: 2rem auto; padding: 1rem; text-align: center; }
+    .programmes h2 { font-size: 2rem; margin-bottom: 1.5rem; color: #002855; }
+    .programme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .programme-card { background-color: #f4f4f4; border-radius: 12px; padding: 1.5rem; text-align: left; color: #111; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); transition: transform 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
+    .programme-card:hover { transform: translateY(-4px); box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); }
+    .programme-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; color: #002855; }
+    .programme-card p { font-size: 0.95rem; color: #333; }
+    .programme-card.diabetes { background-color: #fcd67f; }
+    .programme-card.mental { background-color: #e0e0e0; }
+    .programme-card.screening { background-color: #9edaf1; }
+    .faq-section { background-color: #e0f7f9; padding: 3rem 1rem; }
+    .faq-section h2 { text-align: center; font-size: 2rem; margin-bottom: 2rem; color: #002855; }
+    .faq-container { max-width: 800px; margin: 0 auto; display: grid; gap: 1rem; }
+    .faq-item { background: white; border-radius: 10px; padding: 1rem 1.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); cursor: pointer; transition: background 0.2s; }
+    .faq-item:hover { background-color: #f9f9f9; }
+    .faq-question { font-weight: bold; color: #002855; }
+    .faq-answer { margin-top: 0.5rem; color: #333; display: none; }
+    .faq-item.open .faq-answer { display: block; }
+    .scroll-to-faq { display: block; text-align: right; font-weight: bold; color: #0077cc; margin-top: 1.5rem; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -176,7 +52,6 @@
       <a href="#">Parent Hub</a>
       <a href="#">Health Programmes</a>
       <a href="#">Health Services</a>
-      <!-- New buttons -->
       <button class="action-btn" onclick="goToProfile()">View Profile</button>
       <button class="action-btn" onclick="logout()">Logout</button>
     </nav>
@@ -197,6 +72,24 @@
     </div>
     <a class="more-link" href="#faq">→ View FAQs</a>
   </div>
+
+  <section class="programmes">
+    <h2>Health Programmes</h2>
+    <div class="programme-grid">
+      <div class="programme-card diabetes">
+        <h3>Diabetes Hub →</h3>
+        <p>You can lead a fulfilling life even with diabetes! Eat sensibly, get active and take your medication regularly.</p>
+      </div>
+      <div class="programme-card mental">
+        <h3>Mental Well-being →</h3>
+        <p>A suite of self-care tools and resources to manage your mental health.</p>
+      </div>
+      <div class="programme-card screening">
+        <h3>Healthier SG Screening →</h3>
+        <p>Find out which screening tests and subsidies you are eligible for.</p>
+      </div>
+    </div>
+  </section>
 
   <div class="faq-section" id="faq">
     <h2>Frequently Asked Questions</h2>
@@ -222,7 +115,6 @@
 
   <script>
     const userId = localStorage.getItem("userId");
-
     if (!userId) {
       alert("You must be logged in.");
       window.location.href = "/auth.html";
@@ -235,10 +127,8 @@
 
     function goToProfile() {
       alert("Redirect to profile page (not implemented yet)");
-      // window.location.href = "/profile.html";
     }
 
-    // FAQ toggle
     document.querySelectorAll(".faq-item").forEach(item => {
       item.addEventListener("click", () => {
         item.classList.toggle("open");
