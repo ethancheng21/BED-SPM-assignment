@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+    }
+
+    .chat-wrapper {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+      background: #ffffff;
+    }
+
+    .friend-sidebar {
+      width: 200px;
+      background-color: #005b96;
+      padding: 1rem;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .friend-button {
+      background-color: white;
+      color: #005b96;
+      padding: 0.5rem;
+      border: none;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: left;
+      transition: background 0.2s;
+    }
+
+    .friend-button:hover {
+      background-color: #ffcc80;
+    }
+
+    .friend-button.active {
+      background-color: orange;
+      color: white;
+    }
+
+    .chat-section {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background-color: #005b96;
+      color: white;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .chat-indicator {
+      font-weight: bold;
+    }
+
+    #chatBox {
+      flex-grow: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      background: #f4f4f4;
+    }
+
+    .message {
+      max-width: 70%;
+      margin-bottom: 10px;
+      padding: 0.6rem 1rem;
+      border-radius: 7.5px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      display: inline-block;
+      clear: both;
+    }
+
+    .you {
+      background-color: #ffe0b2;
+      align-self: flex-end;
+      float: right;
+    }
+
+    .friend {
+      background-color: white;
+      align-self: flex-start;
+      float: left;
+    }
+
+    .chat-input {
+      display: flex;
+      padding: 1rem;
+      background: #e0e0e0;
+      border-top: 1px solid #ccc;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 0.7rem;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+      outline: none;
+    }
+
+    .chat-input button {
+      margin-left: 10px;
+      background-color: orange;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .chat-input button:hover {
+      background-color: #f57c00;
+    }
+
+    .back-button {
+      background-color: white;
+      color: orange;
+      border: 1px solid orange;
+      border-radius: 20px;
+      padding: 0.3rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .back-button:hover {
+      background-color: orange;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-wrapper">
+    <div class="friend-sidebar" id="friendList"></div>
+    <div class="chat-section">
+      <div class="chat-header">
+        <button class="back-button" onclick="window.location.href='home1.html'">Home</button>
+        <span>Chat <span class="chat-indicator" id="chatWith">(no one selected)</span></span>
+      </div>
+      <div id="chatBox"></div>
+      <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Type a message" />
+        <button onclick="sendMessage()">></button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem("userId");
+    const friendListDiv = document.getElementById("friendList");
+    const chatBox = document.getElementById("chatBox");
+    const chatWith = document.getElementById("chatWith");
+    let friendId = null;
+    let currentButtons = [];
+
+    async function loadFriends() {
+      const res = await fetch(`/api/friends/${userId}`);
+      const friends = await res.json();
+
+      friends.forEach(friend => {
+        const button = document.createElement("button");
+        button.classList.add("friend-button");
+        button.textContent = friend.name;
+        button.onclick = () => {
+          friendId = friend.user_id;
+          chatWith.textContent = `with ${friend.name}`;
+          currentButtons.forEach(btn => btn.classList.remove("active"));
+          button.classList.add("active");
+          fetchMessages();
+        };
+        currentButtons.push(button);
+        friendListDiv.appendChild(button);
+      });
+    }
+
+    async function fetchMessages() {
+      if (!userId || !friendId) return;
+      const res = await fetch(`/api/chat/history?user1=${userId}&user2=${friendId}`);
+      const messages = await res.json();
+      chatBox.innerHTML = "";
+
+      messages.forEach(msg => {
+        const div = document.createElement("div");
+        div.classList.add("message");
+        div.classList.add(msg.sender_id == userId ? "you" : "friend");
+        div.textContent = msg.content;
+        chatBox.appendChild(div);
+      });
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const input = document.getElementById("messageInput");
+      const content = input.value.trim();
+      if (!content || !friendId) return;
+
+      await fetch("/api/chat/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sender_id: userId, receiver_id: friendId, content })
+      });
+
+      input.value = "";
+      fetchMessages();
+    }
+
+    setInterval(fetchMessages, 5000);
+    loadFriends();
+  </script>
+</body>
+</html>

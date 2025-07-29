@@ -105,6 +105,56 @@
       font-weight: bold;
     }
 
+    .programmes {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .programmes h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #002855;
+    }
+
+    .programme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .programme-card {
+      background-color: #f4f4f4;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: left;
+      color: #111;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    .programme-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .programme-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #002855;
+    }
+
+    .programme-card p {
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .programme-card.diabetes { background-color: #fcd67f; }
+    .programme-card.mental { background-color: #e0e0e0; }
+    .programme-card.screening { background-color: #9edaf1; }
+
     .faq-section {
       background-color: #e0f7f9;
       padding: 3rem 1rem;
@@ -195,6 +245,26 @@
     <a class="more-link scroll-to-faq" href="#faq">→ View FAQs</a>
   </div>
 
+  <!-- Health Programmes Section -->
+  <section class="programmes">
+  <h2>Quick Navigation</h2>
+  <div class="programme-grid">
+    <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
+      <h3>Nearby Facilities →</h3>
+      <p>Find clinics, polyclinics, and libraries near you on the map.</p>
+    </a>
+    <div class="programme-card mental">
+      <h3>[Placeholder]</h3>
+      <p>You can update this card later with your own link and description.</p>
+    </div>
+    <div class="programme-card screening">
+      <h3>[Placeholder]</h3>
+      <p>You can update this card later with your own link and description.</p>
+    </div>
+  </div>
+</section>
+
+
   <div class="faq-section" id="faq">
     <h2>Frequently Asked Questions</h2>
     <div class="faq-container">
@@ -218,7 +288,6 @@
   </div>
 
   <script>
-    // FAQ toggle
     document.querySelectorAll(".faq-item").forEach(item => {
       item.addEventListener("click", () => {
         item.classList.toggle("open");

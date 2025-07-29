@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>View Profile</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #111;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #eee;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .action-btn {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      margin-left: 0.5rem;
+    }
+
+    .profile-container {
+      max-width: 600px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-container h2 {
+      color: #005b96;
+      margin-bottom: 1rem;
+    }
+
+    .profile-info {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .profile-label {
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="home1.html">Home</a>
+      <a href="#">Healthier SG</a>
+      <a href="#">Live Healthy</a>
+      <a href="#">Appointments</a>
+      <a href="#">Facilities</a>
+      <button class="action-btn" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <div class="profile-container">
+    <h2>My Profile</h2>
+    <div class="profile-info">
+      <span class="profile-label">Name:</span> <span id="profileName">Loading...</span>
+    </div>
+    <div class="profile-info">
+      <span class="profile-label">Email:</span> <span id="profileEmail">Loading...</span>
+    </div>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      alert("You are not logged in.");
+      window.location.href = "auth.html";
+    }
+
+    async function loadProfile() {
+      try {
+        const res = await fetch(`/api/auth/profile`, {
+          headers: { userid: userId }
+        });
+        const user = await res.json();
+        document.getElementById("profileName").textContent = user.name;
+        document.getElementById("profileEmail").textContent = user.email;
+      } catch (err) {
+        console.error("Failed to load profile", err);
+        alert("Failed to load profile information.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("userId");
+      window.location.href = "auth.html";
+    }
+
+    loadProfile();
+  </script>
+
+</body>
+</html>
