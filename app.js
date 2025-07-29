@@ -1,9 +1,9 @@
 const dotenv = require("dotenv");
 dotenv.config();
 
-const cors = require("cors");
 const express = require("express");
-const path = require("path"); // Only declared once
+const cors = require("cors");
+const path = require("path");
 const bodyParser = require("body-parser");
 
 const app = express();
@@ -19,31 +19,27 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Import and use route files
-const onemapRoutes = require('./onemap/onemapRoutes');
+// Import routes
+const onemapRoutes = require("./onemap/onemapRoutes");
+const transportRoutes = require("./routes/transportRoutes");
 const eventRoutes = require("./routes/eventRoutes");
-const authRoutes = require("./routes/authRoutes");
-const medicationRoutes = require("./routes/medicationRoutes");
+const hobbyRoutes = require("./routes/hobbyRoutes");
+const groupchatRoutes = require("./routes/groupChatRoutes");
 const facilityRoutes = require("./routes/facilityRoutes");
+const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
-const groupChatRoutes = require("./routes/groupChatRoutes");
-const hobbyRoutes = require("./routes/hobbyRoutes")
-// const appointmentRoutes = require("./routes/appointmentRoutes");
-// const accessibilityRoutes = require("./routes/accessibilityRoutes");
 const userRoutes = require("./routes/userRoutes");
 
-
-app.use("/api", userRoutes);
-app.use('/api/onemap', onemapRoutes);
+// Mount routes
+app.use("/api/onemap", onemapRoutes);
+app.use("/api/transport", transportRoutes);
 app.use("/api/events", eventRoutes);
-app.use("/api/auth", authRoutes);
-app.use("/api/medications", medicationRoutes);
+app.use("/api/hobbies", hobbyRoutes);
+app.use("/api/groupchat", groupchatRoutes);
 app.use("/api/facilities", facilityRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
-app.use("/api/hobbies",hobbyRoutes);
-app.use("/api/groupChat",groupChatRoutes);
-// app.use("/api/appointments", appointmentRoutes);
-// app.use("/api/accessibility", accessibilityRoutes);
+app.use("/api", userRoutes); // Mount userRoutes under /api
 
 // Test route
 app.get("/", (req, res) => {
@@ -52,12 +48,11 @@ app.get("/", (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
 
-// Graceful shutdown handler
-process.on("SIGINT", async () => {
-  console.log("Gracefully shutting down...");
-  // Optional: close DB connections or perform cleanup
+// Graceful shutdown
+process.on("SIGINT", () => {
+  console.log("🔌 Gracefully shutting down...");
   process.exit(0);
 });
