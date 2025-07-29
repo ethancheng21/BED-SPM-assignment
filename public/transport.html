@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Public Transport Route Finder</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; display: flex; }
+    #map { height: 100vh; width: 70vw; }
+    #sidebar {
+      width: 30vw;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 1rem;
+      box-shadow: inset 0 0 5px #ccc;
+      background-color: #f9f9f9;
+    }
+    h2 { margin-top: 0; }
+    ul { padding-left: 1rem; }
+    li { margin-bottom: 0.5rem; }
+    small { color: #555; }
+    button {
+  margin: 0.25rem 0;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  transition: opacity 0.5s ease;
+}
+
+.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div id="sidebar">
+  <h2>Route Steps</h2>
+  <div id="route-instructions"><strong>Click on map to select start and end points.</strong></div>
+  <br>
+  <button id="confirmStartBtn" disabled>✅ Confirm Start</button>
+  <button id="confirmEndBtn" disabled>✅ Confirm End</button>
+  <button id="resetBtn">🔄 Reset Route</button>
+</div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+  let startMarker, endMarker;
+  let confirmedStart = null;
+  let confirmedEnd = null;
+  let selecting = "start";
+
+  const map = L.map("map").setView([1.3521, 103.8198], 12);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+
+  const confirmStartBtn = document.getElementById("confirmStartBtn");
+  const confirmEndBtn = document.getElementById("confirmEndBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const instructionsDiv = document.getElementById("route-instructions");
+
+  map.on("click", (e) => {
+    const latlng = e.latlng;
+
+    if (selecting === "start") {
+      if (startMarker) map.removeLayer(startMarker);
+      startMarker = L.marker(latlng, { draggable: true }).addTo(map).bindPopup("Start").openPopup();
+      confirmStartBtn.disabled = false;
+    } else {
+      if (endMarker) map.removeLayer(endMarker);
+      endMarker = L.marker(latlng, { draggable: true }).addTo(map).bindPopup("End").openPopup();
+      confirmEndBtn.disabled = false;
+    }
+  });
+
+  confirmStartBtn.addEventListener("click", () => {
+    if (startMarker) {
+      confirmedStart = startMarker.getLatLng();
+      confirmStartBtn.disabled = true;
+      selecting = "end";
+      alert("✅ Start confirmed! Now click the end point.");
+    }
+  });
+
+  confirmEndBtn.addEventListener("click", () => {
+    if (endMarker) {
+      confirmedEnd = endMarker.getLatLng();
+      confirmEndBtn.disabled = true;
+      getRoute(); // Only fetch route after both confirmed
+    }
+  });
+
+  resetBtn.addEventListener("click", () => {
+    if (startMarker) map.removeLayer(startMarker);
+    if (endMarker) map.removeLayer(endMarker);
+    startMarker = null;
+    endMarker = null;
+    confirmedStart = null;
+    confirmedEnd = null;
+    selecting = "start";
+    confirmStartBtn.disabled = true;
+    confirmEndBtn.disabled = true;
+    confirmStartBtn.classList.remove("fade-out");
+    confirmEndBtn.classList.remove("fade-out");
+    instructionsDiv.innerHTML = "<strong>Click on map to select start and end points.</strong>";
+  });
+
+  async function getRoute() {
+    const url = `http://localhost:3000/api/transport/route?startLat=${confirmedStart.lat}&startLng=${confirmedStart.lng}&endLat=${confirmedEnd.lat}&endLng=${confirmedEnd.lng}`;
+
+    try {
+      const res = await fetch(url);
+      const data = await res.json();
+
+      instructionsDiv.innerHTML = "";
+
+      if (data.plan && data.plan.itineraries) {
+        const legs = data.plan.itineraries[0].legs;
+        const fromOverall = data.plan.from.name || "Origin";
+        const toOverall = data.plan.to.name || "Destination";
+        const startCoord = `${data.plan.from.lat.toFixed(5)}, ${data.plan.from.lon.toFixed(5)}`;
+        const endCoord = `${data.plan.to.lat.toFixed(5)}, ${data.plan.to.lon.toFixed(5)}`;
+
+        const totalDurationSec = legs.reduce((sum, leg) => sum + (leg.duration || 0), 0);
+        const totalMin = Math.round(totalDurationSec / 60);
+
+        instructionsDiv.innerHTML += `<p><strong>Total Duration:</strong> ~${totalMin} minutes</p>`;
+        instructionsDiv.innerHTML += `<p><strong>Start:</strong> ${fromOverall}<br><small>${startCoord}</small></p>`;
+        instructionsDiv.innerHTML += `<p><strong>End:</strong> ${toOverall}<br><small>${endCoord}</small></p><ul>`;
+
+        legs.forEach((leg) => {
+          const from = leg.from.name || "Point";
+          const to = leg.to.name || "Point";
+          const mode = leg.mode;
+          const route = leg.route ? ` ${leg.route}` : "";
+          const dist = (leg.distance / 1000).toFixed(2);
+
+          const emoji = mode === "WALK" ? "🚶" :
+                        mode === "BUS" ? "🚌" :
+                        mode === "SUBWAY" ? "🚇" : "➡️";
+
+          let stops = leg.intermediateStops ? leg.intermediateStops.length : 0;
+          if ((mode === "BUS" || mode === "SUBWAY") && stops === 0) stops = 1;
+          const stopText = (mode === "BUS" || mode === "SUBWAY")
+            ? ` • ${stops} stop${stops > 1 ? "s" : ""}` : "";
+
+          const durationMin = Math.round(leg.duration / 60);
+          const timeText = durationMin > 0 ? ` • ~${durationMin} min` : "";
+
+          instructionsDiv.innerHTML += `
+            <li><strong>${emoji} ${mode}${route}</strong>: ${from} → ${to} (${dist} km${stopText}${timeText})</li>`;
+        });
+
+        instructionsDiv.innerHTML += "</ul>";
+
+        // ✨ Fade buttons after route is shown
+        confirmStartBtn.classList.add("fade-out");
+        confirmEndBtn.classList.add("fade-out");
+      } else {
+        instructionsDiv.innerHTML = "<strong>No route found.</strong>";
+      }
+    } catch (err) {
+      console.error("❌ Error fetching route:", err.message);
+      instructionsDiv.innerHTML = `<p style='color:red;'>Error: ${err.message}</p>`;
+    }
+  }
+</script>
+</body>
+</html>
