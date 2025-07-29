@@ -26,6 +26,8 @@ const authRoutes = require("./routes/authRoutes");
 const medicationRoutes = require("./routes/medicationRoutes");
 const facilityRoutes = require("./routes/facilityRoutes");
 const chatRoutes = require("./routes/chatRoutes");
+const groupChatRoutes = require("./routes/groupChatRoutes");
+const hobbyRoutes = require("./routes/hobbyRoutes")
 // const appointmentRoutes = require("./routes/appointmentRoutes");
 // const accessibilityRoutes = require("./routes/accessibilityRoutes");
 const userRoutes = require("./routes/userRoutes");
@@ -38,6 +40,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/medications", medicationRoutes);
 app.use("/api/facilities", facilityRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/hobbies",hobbyRoutes);
+app.use("/api/groupChat",groupChatRoutes);
 // app.use("/api/appointments", appointmentRoutes);
 // app.use("/api/accessibility", accessibilityRoutes);
 
