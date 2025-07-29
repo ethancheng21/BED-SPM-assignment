@@ -1,17 +1,25 @@
 const express = require("express");
 const router = express.Router();
-const { getNearbyFacilities, createFacility, updateFacility, deleteFacility } = require("../controllers/facilityController");
 
-// GET - Fetch all nearby facilities based on lat, lng, and max distance
-router.get("/nearby", getNearbyFacilities);
+const {
+  getNearbyFacilities,
+  getCombinedFacilities,
+  createFacility,
+  updateFacility,
+  deleteFacility
+} = require("../controllers/facilityController");
 
-// POST - Create a new facility
+// ✅ Debug logs (optional)
+console.log("🔍 getNearbyFacilities:", typeof getNearbyFacilities);
+console.log("🔍 getCombinedFacilities:", typeof getCombinedFacilities);
+console.log("🔍 createFacility:", typeof createFacility);
+console.log("🔍 updateFacility:", typeof updateFacility);
+console.log("🔍 deleteFacility:", typeof deleteFacility);
+
+// ✅ Routes
+router.get("/nearby", getCombinedFacilities);
 router.post("/", createFacility);
-
-// PUT - Update an existing facility by ID
 router.put("/:id", updateFacility);
-
-// DELETE - Delete a facility by ID
 router.delete("/:id", deleteFacility);
 
 module.exports = router;

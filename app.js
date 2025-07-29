@@ -1,14 +1,16 @@
-// Only require dotenv once
 const dotenv = require("dotenv");
-dotenv.config();  // Load environment variables
+dotenv.config();
+const cors = require("cors");
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const facilityRoutes = require("./routes/facilityRoutes"); // Import the facilities route
+const path = require("path"); // ✅ <-- this is what you're missing
 
-// Initialize express app
 const app = express();
+app.use(cors());
 const port = process.env.PORT || 3000;
+const onemapRoutes = require('./onemap/onemapRoutes');
+app.use('/api/onemap', onemapRoutes);
 
 // Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
@@ -21,7 +23,7 @@ app.use(express.static(path.join(__dirname, "public")));
 const eventRoutes = require("./routes/eventRoutes");
 // const authRoutes = require("./routes/authRoutes");
 // const medicationRoutes = require("./routes/medicationRoutes");
-// const facilityRoutes = require("./routes/facilityRoutes");
+const facilityRoutes = require("./routes/facilityRoutes");
 // const chatRoutes = require("./routes/chatRoutes");
 // const appointmentRoutes = require("./routes/appointmentRoutes");
 // const accessibilityRoutes = require("./routes/accessibilityRoutes");
@@ -30,7 +32,7 @@ const eventRoutes = require("./routes/eventRoutes");
 app.use("/api/events", eventRoutes);
 // app.use("/api/auth", authRoutes);
 // app.use("/api/medications", medicationRoutes);
-// app.use("/api/facilities", facilityRoutes);
+app.use("/api/facilities", facilityRoutes);
 // app.use("/api/chat", chatRoutes);
 // app.use("/api/appointments", appointmentRoutes);
 // app.use("/api/accessibility", accessibilityRoutes);
