@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lions Befrienders</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #111;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .action-btn {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      margin-left: 0.5rem;
+    }
+
+    .banner {
+      margin: 20px auto;
+      max-width: 1000px;
+      text-align: center;
+    }
+
+    .banner img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .services {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .services h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .service-item {
+      background: #f4f4f4;
+      padding: 1rem;
+      border-radius: 10px;
+      font-weight: bold;
+      color: #002855;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s;
+    }
+
+    .service-item:hover {
+      background: #e0e0e0;
+    }
+
+    .more-link {
+      margin-top: 1rem;
+      display: block;
+      text-align: right;
+      color: orange;
+      font-weight: bold;
+    }
+
+    /* FAQ section */
+    .faq-section {
+      background-color: #e0f7f9;
+      padding: 3rem 1rem;
+    }
+
+    .faq-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #002855;
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .faq-item:hover {
+      background-color: #f9f9f9;
+    }
+
+    .faq-question {
+      font-weight: bold;
+      color: #002855;
+    }
+
+    .faq-answer {
+      margin-top: 0.5rem;
+      color: #333;
+      display: none;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    .scroll-to-faq {
+      display: block;
+      text-align: right;
+      font-weight: bold;
+      color: #0077cc;
+      margin-top: 1.5rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="#">Healthier SG</a>
+      <a href="#">Health A-Z</a>
+      <a href="#">Live Healthy</a>
+      <a href="#">Mental Well-Being</a>
+      <a href="#">Parent Hub</a>
+      <a href="#">Health Programmes</a>
+      <a href="#">Health Services</a>
+      <!-- New buttons -->
+      <button class="action-btn" onclick="goToProfile()">View Profile</button>
+      <button class="action-btn" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+
+  <div class="banner">
+    <img src="/background/healthybanner.jpg" alt="Healthier SG Banner">
+  </div>
+
+  <div class="services">
+    <h2>Health Services</h2>
+    <div class="service-grid">
+      <div class="service-item">Healthier SG</div>
+      <div class="service-item">Lab Results</div>
+      <div class="service-item">Appointments</div>
+      <div class="service-item">Payments</div>
+      <div class="service-item">Immunisation</div>
+    </div>
+    <a class="more-link" href="#faq">→ View FAQs</a>
+  </div>
+
+  <div class="faq-section" id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">What is Healthier SG?</div>
+        <div class="faq-answer">Healthier SG is a national preventive care strategy to support better long-term health for Singaporeans.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How do I book an appointment?</div>
+        <div class="faq-answer">You can book appointments online via the SeniorsApp under the "Appointments" section or through your healthcare provider.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Is my personal data secure?</div>
+        <div class="faq-answer">Yes, all data is protected and stored securely according to national healthcare data guidelines.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Where can I find mental wellness resources?</div>
+        <div class="faq-answer">Visit the "Mental Well-Being" section in the navigation bar for curated resources and support services.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+      alert("You must be logged in.");
+      window.location.href = "/auth.html";
+    }
+
+    function logout() {
+      localStorage.removeItem("userId");
+      window.location.href = "/auth.html";
+    }
+
+    function goToProfile() {
+      alert("Redirect to profile page (not implemented yet)");
+      // window.location.href = "/profile.html";
+    }
+
+    // FAQ toggle
+    document.querySelectorAll(".faq-item").forEach(item => {
+      item.addEventListener("click", () => {
+        item.classList.toggle("open");
+      });
+    });
+  </script>
+</body>
+</html>
