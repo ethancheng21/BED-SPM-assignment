@@ -1,100 +1,100 @@
 const {
   fetchNearbyFacilities,
-  createFacility,
-  updateFacility,
-  deleteFacility
+  createFacility: createFacilityModel,
+  updateFacility: updateFacilityModel,
+  deleteFacility: deleteFacilityModel
 } = require("../models/facilityModel");
 
-// Haversine distance formula
-function getDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) *
-    Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-}
+const { fetchNearbyThemeFacilities } = require("../utils/mapApiHelper");
 
-// GET - Nearby facilities by lat/lng
-exports.getNearbyFacilities = async (req, res) => {
-  const { lat, lng, maxDistance } = req.query;
+// ✅ GET - Combined (OneMap + DB)
+exports.getCombinedFacilities = async (req, res) => {
+  const { lat, lng, radius = 3000 } = req.query;
 
-  if (!lat || !lng || !maxDistance) {
-    return res.status(400).json({ message: "Please provide lat, lng, and maxDistance" });
+  if (!lat || !lng) {
+    return res.status(400).json({ message: "lat/lng required" });
   }
 
   try {
-    const facilities = await fetchNearbyFacilities();
-    const nearby = facilities.filter(facility => {
-      const distance = getDistance(
-        parseFloat(lat),
-        parseFloat(lng),
-        facility.latitude,
-        facility.longitude
-      );
-      return distance <= parseFloat(maxDistance);
-    });
+    const latNum = parseFloat(lat);
+    const lngNum = parseFloat(lng);
+    const radiusNum = parseFloat(radius);
 
-    res.status(200).json(nearby);
+    const [onemapFacilities, dbFacilities] = await Promise.all([
+      fetchNearbyThemeFacilities(latNum, lngNum, radiusNum, ["moh_hospitals", "registered_pharmacy"]),
+      fetchNearbyFacilities(latNum, lngNum, radiusNum)
+    ]);
+
+    const formattedDb = dbFacilities.map(f => ({
+      name: f.name || "Unnamed",
+      description: "",
+      lat: parseFloat(f.latitude),
+      lng: parseFloat(f.longitude),
+      address: f.address || "",
+      source: "database",
+      category: f.category || "unspecified",
+      distance: f.distance
+    }));
+
+    const combined = [...onemapFacilities, ...formattedDb];
+    res.status(200).json({ count: combined.length, results: combined });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Error fetching nearby facilities" });
+    console.error("❌ Error in getCombinedFacilities:", err);
+    res.status(500).json({ message: "Failed to fetch combined facilities" });
   }
 };
 
-// POST
+// ✅ POST - Create facility
 exports.createFacility = async (req, res) => {
   const { name, category, latitude, longitude, address } = req.body;
+
   if (!name || !category || !latitude || !longitude || !address) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    await createFacility(name, category, latitude, longitude, address);
+    await createFacilityModel(name, category, latitude, longitude, address);
     res.status(201).json({ message: "Facility created successfully" });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error creating facility:", err);
     res.status(500).json({ message: "Error creating facility" });
   }
 };
 
-// PUT
+// ✅ PUT - Update facility
 exports.updateFacility = async (req, res) => {
   const { id } = req.params;
   const { name, category, latitude, longitude, address } = req.body;
+
   if (!name || !category || !latitude || !longitude || !address) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
-    const result = await updateFacility(id, name, category, latitude, longitude, address);
+    const result = await updateFacilityModel(id, name, category, latitude, longitude, address);
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ message: "Facility not found" });
     }
     res.status(200).json({ message: "Facility updated successfully" });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error updating facility:", err);
     res.status(500).json({ message: "Error updating facility" });
   }
 };
 
-// DELETE
+// ✅ DELETE - Remove facility
 exports.deleteFacility = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await deleteFacility(id);
+    const result = await deleteFacilityModel(id);
     if (result.rowsAffected[0] === 0) {
       return res.status(404).json({ message: "Facility not found" });
     }
     res.status(200).json({ message: "Facility deleted successfully" });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Error deleting facility:", err);
     res.status(500).json({ message: "Error deleting facility" });
   }
 };

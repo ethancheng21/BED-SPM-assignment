@@ -1,12 +1,33 @@
 const { poolPromise } = require("../db");
 const sql = require("mssql");
 
-// Fetch all facilities (unfiltered)
-const fetchNearbyFacilities = async () => {
+// Fetch nearby facilities using Haversine formula
+const fetchNearbyFacilities = async (lat, lng, radius) => {
   const pool = await poolPromise;
+
+  const query = `
+    SELECT 
+      facility_id, name, category, latitude, longitude, address,
+      6371000 * ACOS(
+        COS(RADIANS(@lat)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(@lng)) +
+        SIN(RADIANS(@lat)) * SIN(RADIANS(latitude))
+      ) AS distance
+    FROM facilities
+    WHERE 
+      6371000 * ACOS(
+        COS(RADIANS(@lat)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(@lng)) +
+        SIN(RADIANS(@lat)) * SIN(RADIANS(latitude))
+      ) <= @radius
+    ORDER BY distance;
+  `;
+
   const result = await pool
     .request()
-    .query("SELECT facility_id, name, category, latitude, longitude, address FROM facilities");
+    .input("lat", sql.Float, lat)
+    .input("lng", sql.Float, lng)
+    .input("radius", sql.Float, radius)
+    .query(query);
+
   return result.recordset;
 };
 

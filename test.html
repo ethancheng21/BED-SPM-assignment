@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Test Geolocation</h2>
+    <button onclick="getLoc()">Get Location</button>
+    <p id="out"></p>
+    <script>
+      function getLoc() {
+        navigator.geolocation.getCurrentPosition(
+          pos => {
+            document.getElementById("out").innerText =
+              `✅ Lat: ${pos.coords.latitude}, Lng: ${pos.coords.longitude}`;
+          },
+          err => {
+            document.getElementById("out").innerText =
+              `❌ ERROR: ${err.message}`;
+            console.error("🛑 ERROR:", err);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+      }
+    </script>
+  </body>
+</html>

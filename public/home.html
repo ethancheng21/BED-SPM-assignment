@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SeniorsApp</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #111;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .login-btn {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .banner {
+      margin: 20px auto;
+      max-width: 1000px;
+      text-align: center;
+    }
+
+    .banner img {
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    .services {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .services h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .service-item {
+      background: #f4f4f4;
+      padding: 1rem;
+      border-radius: 10px;
+      font-weight: bold;
+      color: #002855;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s;
+    }
+
+    .service-item:hover {
+      background: #e0e0e0;
+    }
+
+    .more-link {
+      margin-top: 1rem;
+      display: block;
+      text-align: right;
+      color: orange;
+      font-weight: bold;
+    }
+
+    .programmes {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .programmes h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #002855;
+    }
+
+    .programme-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .programme-card {
+      background-color: #f4f4f4;
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: left;
+      color: #111;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    .programme-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .programme-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #002855;
+    }
+
+    .programme-card p {
+      font-size: 0.95rem;
+      color: #333;
+    }
+
+    .programme-card.diabetes { background-color: #fcd67f; }
+    .programme-card.mental { background-color: #e0e0e0; }
+    .programme-card.screening { background-color: #9edaf1; }
+
+    .faq-section {
+      background-color: #e0f7f9;
+      padding: 3rem 1rem;
+    }
+
+    .faq-section h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #002855;
+    }
+
+    .faq-container {
+      max-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      background: white;
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .faq-item:hover {
+      background-color: #f9f9f9;
+    }
+
+    .faq-question {
+      font-weight: bold;
+      color: #002855;
+    }
+
+    .faq-answer {
+      margin-top: 0.5rem;
+      color: #333;
+      display: none;
+    }
+
+    .faq-item.open .faq-answer {
+      display: block;
+    }
+
+    .scroll-to-faq {
+      display: block;
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: bold;
+      color: #0077cc;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Defenders</span></div>
+    <nav>
+      <a href="#">Healthier SG</a>
+      <a href="#">Health A-Z</a>
+      <a href="#">Live Healthy</a>
+      <a href="#">Mental Well-Being</a>
+      <a href="#">Parent Hub</a>
+      <a href="#">Health Programmes</a>
+      <a href="#">Health Services</a>
+    </nav>
+    <a class="login-btn" href="auth.html">Login</a>
+  </header>
+
+  <div class="banner">
+    <img src="/background/healthybanner.jpg" alt="Healthier SG Banner">
+  </div>
+
+  <div class="services">
+    <h2>Health Services</h2>
+    <div class="service-grid">
+      <div class="service-item">Healthier SG</div>
+      <div class="service-item">Lab Results</div>
+      <div class="service-item">Appointments</div>
+      <div class="service-item">Payments</div>
+      <div class="service-item">Immunisation</div>
+    </div>
+    <a class="more-link scroll-to-faq" href="#faq">→ View FAQs</a>
+  </div>
+
+  <!-- Health Programmes Section -->
+  <section class="programmes">
+  <h2>Quick Navigation</h2>
+  <div class="programme-grid">
+    <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
+      <h3>Nearby Facilities →</h3>
+      <p>Find clinics, polyclinics, and libraries near you on the map.</p>
+    </a>
+    <div class="programme-card mental">
+      <h3>[Placeholder]</h3>
+      <p>You can update this card later with your own link and description.</p>
+    </div>
+    <div class="programme-card screening">
+      <h3>[Placeholder]</h3>
+      <p>You can update this card later with your own link and description.</p>
+    </div>
+  </div>
+</section>
+
+
+  <div class="faq-section" id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-container">
+      <div class="faq-item">
+        <div class="faq-question">What is Healthier SG?</div>
+        <div class="faq-answer">Healthier SG is a national preventive care strategy to support better long-term health for Singaporeans.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How do I book an appointment?</div>
+        <div class="faq-answer">You can book appointments online via the SeniorsApp under the "Appointments" section or through your healthcare provider.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Is my personal data secure?</div>
+        <div class="faq-answer">Yes, all data is protected and stored securely according to national healthcare data guidelines.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Where can I find mental wellness resources?</div>
+        <div class="faq-answer">Visit the "Mental Well-Being" section in the navigation bar for curated resources and support services.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll(".faq-item").forEach(item => {
+      item.addEventListener("click", () => {
+        item.classList.toggle("open");
+      });
+    });
+  </script>
+
+</body>
+</html>

@@ -17,12 +17,15 @@
   },
   "homepage": "https://github.com/ethancheng21/BED-SPM-assignment#readme",
   "dependencies": {
+    "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "mssql": "^11.0.1"
+    "mssql": "^11.0.1",
+    "node-fetch": "^2.7.0"
   },
   "description": ""
 }
