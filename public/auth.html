@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login / Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .auth-container {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+    h2 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .toggle-link {
+      margin-top: 10px;
+      text-align: center;
+      cursor: pointer;
+      color: #0077cc;
+      text-decoration: underline;
+    }
+    .error, .success {
+      margin-top: 10px;
+      text-align: center;
+    }
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h2 id="formTitle">Login</h2>
+
+    <!-- Login Form -->
+    <form id="loginForm">
+      <label for="loginEmail">Email:</label>
+      <input type="email" id="loginEmail" required />
+
+      <label for="loginPassword">Password:</label>
+      <input type="password" id="loginPassword" required />
+
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Register Form -->
+    <form id="registerForm" style="display: none;">
+      <label for="registerName">Name:</label>
+      <input type="text" id="registerName" required />
+
+      <label for="registerEmail">Email:</label>
+      <input type="email" id="registerEmail" required />
+
+      <label for="registerPassword">Password:</label>
+      <input type="password" id="registerPassword" required />
+
+      <button type="submit">Register</button>
+    </form>
+
+    <div class="toggle-link" onclick="toggleForm()">Don't have an account? Register</div>
+    <div id="message" class="error"></div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const registerForm = document.getElementById("registerForm");
+    const formTitle = document.getElementById("formTitle");
+    const toggleLink = document.querySelector(".toggle-link");
+    const messageDiv = document.getElementById("message");
+
+    function toggleForm() {
+      const isLoginVisible = loginForm.style.display !== "none";
+      loginForm.style.display = isLoginVisible ? "none" : "block";
+      registerForm.style.display = isLoginVisible ? "block" : "none";
+      formTitle.textContent = isLoginVisible ? "Register" : "Login";
+      toggleLink.textContent = isLoginVisible ? "Already have an account? Login" : "Don't have an account? Register";
+      messageDiv.textContent = "";
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("loginEmail").value;
+      const password = document.getElementById("loginPassword").value;
+
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        messageDiv.className = "success";
+        messageDiv.textContent = "Login successful! Redirecting...";
+        localStorage.setItem("userId", result.userId);
+        setTimeout(() => {
+          window.location.href = "/home1.html"; // ✅ Redirect to home1.html
+        }, 1000);
+      } else {
+        messageDiv.className = "error";
+        messageDiv.textContent = result.message || "Login failed.";
+      }
+    });
+
+    registerForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = document.getElementById("registerName").value;
+      const email = document.getElementById("registerEmail").value;
+      const password = document.getElementById("registerPassword").value;
+
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        messageDiv.className = "success";
+        messageDiv.textContent = "Registration successful! Please login.";
+        toggleForm();
+      } else {
+        messageDiv.className = "error";
+        messageDiv.textContent = result.message || "Registration failed.";
+      }
+    });
+  </script>
+</body>
+</html>

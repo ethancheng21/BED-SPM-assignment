@@ -1,0 +1,226 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  background-color: #ffffff;
+  color: #333;
+  margin: 0;
+  padding: 40px 20px;
+  line-height: 1.6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Prevent horizontal scrolling */
+body {
+  overflow-x: hidden;
+}
+
+/* Ensure body takes full width and no extra margin */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+
+body {
+  background-image: url("./background/green bg.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  overflow-x: hidden; /* Also here, to double prevent overflow */
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+#event-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 40px; /* vertical and horizontal gaps */
+  justify-content: center;
+  margin: 40px auto;
+  max-width: 900px; /* limits total width of grid */
+  padding: 0 20px;
+}
+
+
+
+.event-card {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+  border-radius: 10px;
+}
+
+.event-card h3 {
+  margin-top: 0;
+}
+
+button {
+  margin-top: 10px;
+  margin-right: 10px;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.cancel-btn {
+  background-color: #e74c3c;
+}
+
+
+/* Outer nav bar */
+.nav-bar {
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Inner container: controls spacing */
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e5631;
+}
+
+/* Nav links */
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  font-size: 1rem;
+  color: #333;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.nav-links a:hover {
+  background-color: #f0f0f0;
+}
+
+/* Login button */
+.nav-login {
+  background-color: #f08c2d;
+  color: white;
+  font-weight: bold;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.nav-login:hover {
+  background-color: #d5771f;
+}
+
+
+
+
+
+
+#hobby-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 60px;
+  justify-items: center;
+  margin-top: 30px;
+  padding: 0 40px;
+}
+
+
+/* Modal background */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  position: relative;
+  text-align: center;
+}
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Member list */
+#modal-member-list {
+  text-align: left;
+  padding-left: 0;
+  list-style: none;
+  margin-bottom: 20px;
+}
+
+/* Chat button */
+#modal-chat-btn {
+  background-color: #50b948;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+
+
+
+
+@media (max-width: 768px) {
+  #event-list {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+}

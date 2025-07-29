@@ -1,4 +1,5 @@
 const { sql, poolPromise } = require("../db");
+const bcrypt = require("bcryptjs");
 
 // REGISTER
 exports.register = async (req, res) => {
@@ -8,10 +9,12 @@ exports.register = async (req, res) => {
     const pool = await poolPromise;
     if (!pool) throw new Error("Database connection failed.");
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     await pool.request()
       .input("name", sql.VarChar(100), name)
       .input("email", sql.VarChar(100), email)
-      .input("password", sql.VarChar(255), password)
+      .input("password", sql.VarChar(255), hashedPassword)
       .query(`
         INSERT INTO users (name, email, password_hash)
         VALUES (@name, @email, @password)
@@ -38,14 +41,18 @@ exports.login = async (req, res) => {
 
     const result = await pool.request()
       .input("email", sql.VarChar(100), email)
-      .input("password", sql.VarChar(255), password)
       .query(`
-        SELECT * FROM users WHERE email = @email AND password_hash = @password
+        SELECT * FROM users WHERE email = @email
       `);
 
     const user = result.recordset[0];
 
     if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+    if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
@@ -98,11 +105,13 @@ exports.updateProfile = async (req, res) => {
     const pool = await poolPromise;
     if (!pool) throw new Error("Database connection failed.");
 
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     await pool.request()
       .input("userId", sql.Int, userId)
       .input("name", sql.VarChar(100), name)
       .input("email", sql.VarChar(100), email)
-      .input("password", sql.VarChar(255), password)
+      .input("password", sql.VarChar(255), hashedPassword)
       .query(`
         UPDATE users
         SET name = @name, email = @email, password_hash = @password
