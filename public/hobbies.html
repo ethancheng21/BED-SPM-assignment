@@ -8,18 +8,18 @@
 </head>
 <body>
 
-    <div id="hobby-modal" class="modal">
-  <div class="modal-content">
-    <span class="close-btn" onclick="closeModal()">&times;</span>
-    <h2 id="modal-hobby-name"></h2>
-    <h4>Members:</h4>
-    <ul id="modal-member-list"></ul>
-    <button id="modal-chat-btn">Go to Chat</button>
+  <!-- Hobby Modal -->
+  <div id="hobby-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h2 id="modal-hobby-name"></h2>
+      <h4>Members:</h4>
+      <ul id="modal-member-list"></ul>
+      <button id="modal-chat-btn">Go to Chat</button>
+    </div>
   </div>
-</div>
 
-
-  <!-- Reused nav bar -->
+  <!-- Navbar -->
   <nav class="nav-bar">
     <div class="nav-container">
       <div class="nav-logo">LOGO</div>
@@ -34,6 +34,7 @@
     </div>
   </nav>
 
+  <!-- Page Content -->
   <h1 style="text-align: center;">Hobby Groups</h1>
 
   <label for="user-select">Select User:</label>
@@ -43,14 +44,6 @@
   </select>
 
   <div id="hobby-list"></div>
-
-  <div id="hobby-details" style="display: none; margin-top: 40px; padding: 20px; border-top: 1px solid #ccc;">
-  <h2 id="hobby-name"></h2>
-  <h4>Members:</h4>
-  <ul id="member-list"></ul>
-  <button id="go-chat-btn">Go to Chat</button>
-</div>
-
 
   <script>
     async function fetchHobbies() {
@@ -62,15 +55,14 @@
 
       hobbies.forEach(hobby => {
         const card = document.createElement("div");
-        card.className = "event-card"; // reuse event card style
+        card.className = "event-card";
         card.innerHTML = `
-        <h3>${hobby.name}</h3>
-        <p>${hobby.description}</p>
-        <button onclick="joinHobby(${hobby.hobby_id})">Join</button>
-        <button onclick="leaveHobby(${hobby.hobby_id})" class="cancel-btn">Leave</button>
-        <button onclick="viewHobbyDetails(${hobby.hobby_id})" class="view-btn">View Details</button>
+          <h3>${hobby.name}</h3>
+          <p>${hobby.description}</p>
+          <button onclick="joinHobby(${hobby.hobby_id})">Join</button>
+          <button onclick="leaveHobby(${hobby.hobby_id})" class="cancel-btn">Leave</button>
+          <button onclick="viewHobbyDetails(${hobby.hobby_id})" class="view-btn">View Details</button>
         `;
-
         container.appendChild(card);
       });
     }
@@ -105,53 +97,50 @@
       }
     }
 
-
     function closeModal() {
-  document.getElementById("hobby-modal").style.display = "none";
-}
-
-async function viewHobbyDetails(hobbyId) {
-  try {
-    const res = await fetch(`/api/hobbies/${hobbyId}`);
-    const hobby = await res.json();
-
-    document.getElementById("modal-hobby-name").textContent = hobby.name;
-
-    const memberList = document.getElementById("modal-member-list");
-    memberList.innerHTML = "";
-
-    if (hobby.members && hobby.members.length > 0) {
-      hobby.members.forEach(member => {
-        const li = document.createElement("li");
-        li.textContent = `${member.name} (${member.email})`;
-        memberList.appendChild(li);
-      });
-    } else {
-      const li = document.createElement("li");
-      li.textContent = "No members yet.";
-      memberList.appendChild(li);
+      document.getElementById("hobby-modal").style.display = "none";
     }
 
-    document.getElementById("modal-chat-btn").onclick = () => {
-      window.location.href = `chat.html?hobbyId=${hobbyId}`;
+    async function viewHobbyDetails(hobbyId) {
+      try {
+        const res = await fetch(`/api/hobbies/${hobbyId}`);
+        const hobby = await res.json();
+
+        document.getElementById("modal-hobby-name").textContent = hobby.name;
+
+        const memberList = document.getElementById("modal-member-list");
+        memberList.innerHTML = "";
+
+        if (hobby.members && hobby.members.length > 0) {
+          hobby.members.forEach(member => {
+            const li = document.createElement("li");
+            li.textContent = `${member.name} (${member.email})`;
+            memberList.appendChild(li);
+          });
+        } else {
+          const li = document.createElement("li");
+          li.textContent = "No members yet.";
+          memberList.appendChild(li);
+        }
+
+        // 🔁 Dynamic chat link
+        document.getElementById("modal-chat-btn").onclick = () => {
+          window.location.href = `groupChat.html?hobbyId=${hobbyId}`;
+        };
+
+        document.getElementById("hobby-modal").style.display = "block";
+      } catch (err) {
+        console.error("Error loading hobby details:", err);
+        alert("Could not load hobby details.");
+      }
+    }
+
+    window.onclick = function (event) {
+      const modal = document.getElementById("hobby-modal");
+      if (event.target === modal) {
+        closeModal();
+      }
     };
-
-    document.getElementById("hobby-modal").style.display = "block";
-  } catch (err) {
-    console.error("Error loading hobby details:", err);
-    alert("Could not load hobby details.");
-  }
-}
-
-// Optional: Close modal when clicking outside it
-window.onclick = function (event) {
-  const modal = document.getElementById("hobby-modal");
-  if (event.target === modal) {
-    closeModal();
-  }
-};
-
-
 
     window.onload = fetchHobbies;
   </script>

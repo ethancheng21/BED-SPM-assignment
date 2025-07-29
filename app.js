@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();  // Load environment variables
 
 const express = require("express");
+const path = require("path");
 const bodyParser = require("body-parser");
 const facilityRoutes = require("./routes/facilityRoutes"); // Import the facilities route
 
@@ -19,6 +20,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Register route files here
 const eventRoutes = require("./routes/eventRoutes");
+const hobbyRoutes = require("./routes/hobbyRoutes");
+const groupchatRoutes = require("./routes/groupChatRoutes");
 // const authRoutes = require("./routes/authRoutes");
 // const medicationRoutes = require("./routes/medicationRoutes");
 // const facilityRoutes = require("./routes/facilityRoutes");
@@ -28,6 +31,8 @@ const eventRoutes = require("./routes/eventRoutes");
 
 // Mount all routes under API prefixes
 app.use("/api/events", eventRoutes);
+app.use("/api/hobbies", hobbyRoutes);
+app.use("/api/groupchat", groupchatRoutes);
 // app.use("/api/auth", authRoutes);
 // app.use("/api/medications", medicationRoutes);
 // app.use("/api/facilities", facilityRoutes);
