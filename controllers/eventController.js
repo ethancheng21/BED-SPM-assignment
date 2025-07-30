@@ -3,6 +3,7 @@ const {
   fetchEventById,
   insertRsvp,
   deleteRsvp,
+  checkExistingRsvp,  // Import this function from your model
 } = require("../models/eventModel");
 
 // GET /api/events
@@ -42,9 +43,10 @@ exports.rsvpToEvent = async (req, res) => {
     res.status(200).json({ message: "RSVP recorded" });
   } catch (err) {
     console.error("Error inserting RSVP:", err);
-    res.status(500).json({ message: "Error inserting RSVP" });
+    res.status(400).json({ message: err.message });  // Send error message to frontend
   }
 };
+
 
 // DELETE /api/events/:id/unrsvp
 exports.unrsvpFromEvent = async (req, res) => {
