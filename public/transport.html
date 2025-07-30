@@ -6,163 +6,283 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; display: flex; }
-    #map { height: 100vh; width: 70vw; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    /* Navbar styles */
+    header {
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Main content layout */
+    .main-container {
+      display: flex;
+      flex-grow: 1;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
     #sidebar {
       width: 30vw;
-      height: 100vh;
+      height: 100%;
       overflow-y: auto;
       padding: 1rem;
-      box-shadow: inset 0 0 5px #ccc;
-      background-color: #f9f9f9;
+      background-color: #f4f6f8;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
     }
-    h2 { margin-top: 0; }
-    ul { padding-left: 1rem; }
-    li { margin-bottom: 0.5rem; }
-    small { color: #555; }
-    button {
-  margin: 0.25rem 0;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  transition: opacity 0.5s ease;
-}
 
-.fade-out {
-  opacity: 0;
-  pointer-events: none;
-}
+    h2 {
+      margin-top: 0;
+      font-size: 1.4rem;
+      color: #333;
+    }
+
+    ul {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    li {
+      background: #fff;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      padding: 0.75rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: #0077cc;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #005fa3;
+      transform: scale(1.02);
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .fade-out {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* 🧽 Clean popup styling */
+    .leaflet-popup-content-wrapper {
+      background: #0077cc;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .leaflet-popup-tip {
+      background: #0077cc;
+    }
+
+    .leaflet-popup-close-button {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div id="map"></div>
-  <div id="sidebar">
-  <h2>Route Steps</h2>
-  <div id="route-instructions"><strong>Click on map to select start and end points.</strong></div>
-  <br>
-  <button id="confirmStartBtn" disabled>✅ Confirm Start</button>
-  <button id="confirmEndBtn" disabled>✅ Confirm End</button>
-  <button id="resetBtn">🔄 Reset Route</button>
-</div>
+  <!-- Simplified Navbar -->
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="home.html">Home</a> <!-- Link to Home page -->
+    </nav>
+  </header>
+
+  <div class="main-container">
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <h2>Route Steps</h2>
+      <div id="route-instructions"><strong>Click on map to select start and end points.</strong></div>
+      <br>
+      <button id="confirmStartBtn" disabled>✅ Confirm Start</button>
+      <button id="confirmEndBtn" disabled>✅ Confirm End</button>
+      <button id="resetBtn">🔄 Reset Route</button>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="leaflet.polyline.snakeanim.js"></script>
+
   <script>
-  let startMarker, endMarker;
-  let confirmedStart = null;
-  let confirmedEnd = null;
-  let selecting = "start";
+    let startMarker, endMarker, routeLine;
+    let confirmedStart = null, confirmedEnd = null, selecting = "start";
 
-  const map = L.map("map").setView([1.3521, 103.8198], 12);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+    const map = L.map("map").setView([1.3521, 103.8198], 12);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
 
-  const confirmStartBtn = document.getElementById("confirmStartBtn");
-  const confirmEndBtn = document.getElementById("confirmEndBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const instructionsDiv = document.getElementById("route-instructions");
+    const confirmStartBtn = document.getElementById("confirmStartBtn");
+    const confirmEndBtn = document.getElementById("confirmEndBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const instructionsDiv = document.getElementById("route-instructions");
 
-  map.on("click", (e) => {
-    const latlng = e.latlng;
+    map.on("click", (e) => {
+      const latlng = e.latlng;
+      if (selecting === "start") {
+        if (startMarker) map.removeLayer(startMarker);
+        startMarker = L.marker(latlng, { draggable: true })
+          .addTo(map)
+          .bindPopup("<b>📍 Start</b>")
+          .openPopup();
+        confirmStartBtn.disabled = false;
+      } else {
+        if (endMarker) map.removeLayer(endMarker);
+        endMarker = L.marker(latlng, { draggable: true })
+          .addTo(map)
+          .bindPopup("<b>🏁 End</b>")
+          .openPopup();
+        confirmEndBtn.disabled = false;
+      }
+    });
 
-    if (selecting === "start") {
-      if (startMarker) map.removeLayer(startMarker);
-      startMarker = L.marker(latlng, { draggable: true }).addTo(map).bindPopup("Start").openPopup();
-      confirmStartBtn.disabled = false;
-    } else {
-      if (endMarker) map.removeLayer(endMarker);
-      endMarker = L.marker(latlng, { draggable: true }).addTo(map).bindPopup("End").openPopup();
-      confirmEndBtn.disabled = false;
-    }
-  });
-
-  confirmStartBtn.addEventListener("click", () => {
-    if (startMarker) {
+    confirmStartBtn.addEventListener("click", () => {
       confirmedStart = startMarker.getLatLng();
       confirmStartBtn.disabled = true;
       selecting = "end";
       alert("✅ Start confirmed! Now click the end point.");
-    }
-  });
+    });
 
-  confirmEndBtn.addEventListener("click", () => {
-    if (endMarker) {
+    confirmEndBtn.addEventListener("click", () => {
       confirmedEnd = endMarker.getLatLng();
       confirmEndBtn.disabled = true;
-      getRoute(); // Only fetch route after both confirmed
-    }
-  });
+      getRoute();
+    });
 
-  resetBtn.addEventListener("click", () => {
-    if (startMarker) map.removeLayer(startMarker);
-    if (endMarker) map.removeLayer(endMarker);
-    startMarker = null;
-    endMarker = null;
-    confirmedStart = null;
-    confirmedEnd = null;
-    selecting = "start";
-    confirmStartBtn.disabled = true;
-    confirmEndBtn.disabled = true;
-    confirmStartBtn.classList.remove("fade-out");
-    confirmEndBtn.classList.remove("fade-out");
-    instructionsDiv.innerHTML = "<strong>Click on map to select start and end points.</strong>";
-  });
+    resetBtn.addEventListener("click", () => {
+      if (startMarker) map.removeLayer(startMarker);
+      if (endMarker) map.removeLayer(endMarker);
+      if (routeLine) map.removeLayer(routeLine);
+      startMarker = endMarker = routeLine = confirmedStart = confirmedEnd = null;
+      selecting = "start";
+      confirmStartBtn.disabled = true;
+      confirmEndBtn.disabled = true;
+      confirmStartBtn.classList.remove("fade-out");
+      confirmEndBtn.classList.remove("fade-out");
+      instructionsDiv.innerHTML = "<strong>Click on map to select start and end points.</strong>";
+    });
 
-  async function getRoute() {
-    const url = `http://localhost:3000/api/transport/route?startLat=${confirmedStart.lat}&startLng=${confirmedStart.lng}&endLat=${confirmedEnd.lat}&endLng=${confirmedEnd.lng}`;
+    async function getRoute() {
+      const url = `http://localhost:3000/api/transport/route?startLat=${confirmedStart.lat}&startLng=${confirmedStart.lng}&endLat=${confirmedEnd.lat}&endLng=${confirmedEnd.lng}`;
 
-    try {
-      const res = await fetch(url);
-      const data = await res.json();
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
 
-      instructionsDiv.innerHTML = "";
+        instructionsDiv.innerHTML = "";
 
-      if (data.plan && data.plan.itineraries) {
-        const legs = data.plan.itineraries[0].legs;
-        const fromOverall = data.plan.from.name || "Origin";
-        const toOverall = data.plan.to.name || "Destination";
-        const startCoord = `${data.plan.from.lat.toFixed(5)}, ${data.plan.from.lon.toFixed(5)}`;
-        const endCoord = `${data.plan.to.lat.toFixed(5)}, ${data.plan.to.lon.toFixed(5)}`;
+        if (data.plan && data.plan.itineraries) {
+          const legs = data.plan.itineraries[0].legs;
+          const routeCoords = [];
 
-        const totalDurationSec = legs.reduce((sum, leg) => sum + (leg.duration || 0), 0);
-        const totalMin = Math.round(totalDurationSec / 60);
+          instructionsDiv.innerHTML += `<p><strong>Total Duration:</strong> ~${Math.round(legs.reduce((s, l) => s + l.duration, 0) / 60)} minutes</p>`;
+          instructionsDiv.innerHTML += `<ul>`;
 
-        instructionsDiv.innerHTML += `<p><strong>Total Duration:</strong> ~${totalMin} minutes</p>`;
-        instructionsDiv.innerHTML += `<p><strong>Start:</strong> ${fromOverall}<br><small>${startCoord}</small></p>`;
-        instructionsDiv.innerHTML += `<p><strong>End:</strong> ${toOverall}<br><small>${endCoord}</small></p><ul>`;
+          legs.forEach((leg) => {
+            const from = leg.from.name || "Point";
+            const to = leg.to.name || "Point";
+            const dist = (leg.distance / 1000).toFixed(2);
+            const mode = leg.mode;
+            const emoji = mode === "WALK" ? "🚶" : mode === "BUS" ? "🚌" : mode === "SUBWAY" ? "🚇" : "➡️";
 
-        legs.forEach((leg) => {
-          const from = leg.from.name || "Point";
-          const to = leg.to.name || "Point";
-          const mode = leg.mode;
-          const route = leg.route ? ` ${leg.route}` : "";
-          const dist = (leg.distance / 1000).toFixed(2);
+            instructionsDiv.innerHTML += `<li><strong>${emoji} ${mode}</strong>: ${from} → ${to} (${dist} km)</li>`;
 
-          const emoji = mode === "WALK" ? "🚶" :
-                        mode === "BUS" ? "🚌" :
-                        mode === "SUBWAY" ? "🚇" : "➡️";
+            if (leg.legGeometry?.points) {
+              routeCoords.push(...decodePolyline(leg.legGeometry.points));
+            }
+          });
 
-          let stops = leg.intermediateStops ? leg.intermediateStops.length : 0;
-          if ((mode === "BUS" || mode === "SUBWAY") && stops === 0) stops = 1;
-          const stopText = (mode === "BUS" || mode === "SUBWAY")
-            ? ` • ${stops} stop${stops > 1 ? "s" : ""}` : "";
+          instructionsDiv.innerHTML += "</ul>";
 
-          const durationMin = Math.round(leg.duration / 60);
-          const timeText = durationMin > 0 ? ` • ~${durationMin} min` : "";
+          if (routeLine) map.removeLayer(routeLine);
+          routeLine = L.polyline(routeCoords, {
+            color: '#0077cc',
+            weight: 5,
+            opacity: 0.9
+          }).addTo(map);
 
-          instructionsDiv.innerHTML += `
-            <li><strong>${emoji} ${mode}${route}</strong>: ${from} → ${to} (${dist} km${stopText}${timeText})</li>`;
-        });
+          routeLine.snakeIn();
+          setTimeout(() => map.fitBounds(routeLine.getBounds()), 1000);
 
-        instructionsDiv.innerHTML += "</ul>";
-
-        // ✨ Fade buttons after route is shown
-        confirmStartBtn.classList.add("fade-out");
-        confirmEndBtn.classList.add("fade-out");
-      } else {
-        instructionsDiv.innerHTML = "<strong>No route found.</strong>";
+          confirmStartBtn.classList.add("fade-out");
+          confirmEndBtn.classList.add("fade-out");
+        } else {
+          instructionsDiv.innerHTML = "<strong>No route found.</strong>";
+        }
+      } catch (err) {
+        console.error("❌ Error fetching route:", err.message);
+        instructionsDiv.innerHTML = `<p style='color:red;'>Error: ${err.message}</p>`;
       }
-    } catch (err) {
-      console.error("❌ Error fetching route:", err.message);
-      instructionsDiv.innerHTML = `<p style='color:red;'>Error: ${err.message}</p>`;
     }
-  }
-</script>
+
+    function decodePolyline(str) {
+      let index = 0, lat = 0, lng = 0, coordinates = [];
+      while (index < str.length) {
+        let b, shift = 0, result = 0;
+        do { b = str.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
+        const deltaLat = ((result & 1) ? ~(result >> 1) : (result >> 1));
+        lat += deltaLat;
+        shift = result = 0;
+        do { b = str.charCodeAt(index++) - 63; result |= (b & 0x1f) << shift; shift += 5; } while (b >= 0x20);
+        const deltaLng = ((result & 1) ? ~(result >> 1) : (result >> 1));
+        lng += deltaLng;
+        coordinates.push([lat / 1e5, lng / 1e5]);
+      }
+      return coordinates;
+    }
+  </script>
 </body>
 </html>
