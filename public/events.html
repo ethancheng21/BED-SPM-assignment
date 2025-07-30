@@ -8,22 +8,23 @@
 </head>
 <body>
 
-<nav class="nav-bar">
-  <div class="nav-container">
-    <div class="nav-logo">LOGO</div>
-    <ul class="nav-links">
-      <li><a href="home.html">Home</a></li>
-      <li><a href="events.html">Events</a></li>
-      <li><a href="facilities.html">Map</a></li>
-      <li><a href="groupchat.html">Chat</a></li>
-      <li><a href="faq.html">FAQ</a></li>
-    </ul>
-    <button class="nav-login" onclick="logout()">Logout</button>
-  </div>
-</nav>
 
+<header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="#">Healthier SG</a>
+      <a href="#">Health A-Z</a>
+      <a href="#">Live Healthy</a>
+      <a href="#">Mental Well-Being</a>
+      <a href="#">Parent Hub</a>
+      <a href="#">Health Programmes</a>
+      <a href="#">Health Services</a>
+      <button class="action-btn" onclick="goToProfile()">View Profile</button>
+      <button class="action-btn" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+<!-- Page content remains the same -->
 <h1>Community Events</h1>
-<p id="user-label"></p> <!-- Shows who is logged in -->
 
 <div id="event-list"></div>
 
@@ -36,7 +37,7 @@
     alert("Please login first.");
     window.location.href = "home.html";
   } else {
-    document.getElementById("user-label").textContent = `Logged in as: ${userName}`;
+    
   }
 
   // ✅ Logout function
@@ -116,6 +117,9 @@
       alert("Error cancelling RSVP.");
     }
   }
+    function goToProfile() {
+    window.location.href = "viewProfile.html";
+  } 
 
   // ✅ Load events when page opens
   window.onload = fetchEvents;

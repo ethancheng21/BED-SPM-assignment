@@ -19,140 +19,148 @@
     </div>
   </div>
 
-  <!-- Navbar -->
-  <nav class="nav-bar">
-    <div class="nav-container">
-      <div class="nav-logo">LOGO</div>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Events</a></li>
-        <li><a href="#">Hobbies</a></li>
-        <li><a href="#">Chat</a></li>
-        <li><a href="#">FAQ</a></li>
-      </ul>
-      <button class="nav-login">Login</button>
-    </div>
-  </nav>
+  <!-- Header and Nav Bar -->
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="#">Healthier SG</a>
+      <a href="#">Health A-Z</a>
+      <a href="#">Live Healthy</a>
+      <a href="#">Mental Well-Being</a>
+      <a href="#">Parent Hub</a>
+      <a href="#">Health Programmes</a>
+      <a href="#">Health Services</a>
+      <button class="action-btn" onclick="goToProfile()">View Profile</button>
+      <button class="action-btn" onclick="logout()">Logout</button>
+    </nav>
+  </header>
 
-  <!-- Page Content -->
-  <h1 style="text-align: center;">Hobby Groups</h1>
-
-  <p id="user-label"></p>
+  <!-- Page content -->
+  <h1>Hobby Groups</h1>
 
   <div id="hobby-list"></div>
 
   <script>
-  const userId = localStorage.getItem("userId");
-  const userName = localStorage.getItem("userName");
+    // Check if user is logged in
+    const userId = localStorage.getItem("userId");
+    const userName = localStorage.getItem("userName");
 
-  if (!userId) {
-    alert("Please log in first.");
-    window.location.href = "home.html";
-  } else {
-    document.getElementById("user-label").textContent = `Logged in as: ${userName}`;
-  }
-
-  async function fetchHobbies() {
-    const res = await fetch("/api/hobbies");
-    const hobbies = await res.json();
-
-    const container = document.getElementById("hobby-list");
-    container.innerHTML = "";
-
-    hobbies.forEach(hobby => {
-      const card = document.createElement("div");
-      card.className = "event-card";
-      card.innerHTML = `
-        <h3>${hobby.name}</h3>
-        <p>${hobby.description}</p>
-        <button onclick="joinHobby(${hobby.hobby_id})">Join</button>
-        <button onclick="leaveHobby(${hobby.hobby_id})" class="cancel-btn">Leave</button>
-        <button onclick="viewHobbyDetails(${hobby.hobby_id})" class="view-btn">View Details</button>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  async function joinHobby(hobbyId) {
-    try {
-      const res = await fetch(`/api/hobbies/${hobbyId}/join`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "userId": userId
-        }
-      });
-      const data = await res.json();
-      alert(data.message || "Joined hobby group");
-    } catch (err) {
-      alert("Error joining hobby group.");
+    if (!userId) {
+      alert("Please log in first.");
+      window.location.href = "home.html";
+    } else {
+      
     }
-  }
 
-  async function leaveHobby(hobbyId) {
-    try {
-      const res = await fetch(`/api/hobbies/${hobbyId}/leave`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          "userId": userId
-        }
+    // Fetch and display hobbies
+    async function fetchHobbies() {
+      const res = await fetch("/api/hobbies");
+      const hobbies = await res.json();
+
+      const container = document.getElementById("hobby-list");
+      container.innerHTML = ""; // Clear any existing content
+
+      hobbies.forEach(hobby => {
+        const card = document.createElement("div");
+        card.className = "event-card";
+        card.innerHTML = `
+          <h3>${hobby.name}</h3>
+          <p>${hobby.description}</p>
+          <button onclick="joinHobby(${hobby.hobby_id})">Join</button>
+          <button onclick="leaveHobby(${hobby.hobby_id})" class="cancel-btn">Leave</button>
+          <button onclick="viewHobbyDetails(${hobby.hobby_id})" class="view-btn">View Details</button>
+        `;
+        container.appendChild(card);
       });
-      const data = await res.json();
-      alert(data.message || "Left hobby group");
-    } catch (err) {
-      alert("Error leaving hobby group.");
     }
-  }
 
-  function closeModal() {
-    document.getElementById("hobby-modal").style.display = "none";
-  }
-
-  async function viewHobbyDetails(hobbyId) {
-    try {
-      const res = await fetch(`/api/hobbies/${hobbyId}`);
-      const hobby = await res.json();
-
-      document.getElementById("modal-hobby-name").textContent = hobby.name;
-
-      const memberList = document.getElementById("modal-member-list");
-      memberList.innerHTML = "";
-
-      if (hobby.members && hobby.members.length > 0) {
-        hobby.members.forEach(member => {
-          const li = document.createElement("li");
-          li.textContent = `${member.name} (${member.email})`;
-          memberList.appendChild(li);
+    // Join hobby group
+    async function joinHobby(hobbyId) {
+      try {
+        const res = await fetch(`/api/hobbies/${hobbyId}/join`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "userId": userId
+          }
         });
-      } else {
-        const li = document.createElement("li");
-        li.textContent = "No members yet.";
-        memberList.appendChild(li);
+        const data = await res.json();
+        alert(data.message || "Joined hobby group");
+      } catch (err) {
+        alert("Error joining hobby group.");
       }
-
-      document.getElementById("modal-chat-btn").onclick = () => {
-        window.location.href = `groupChat.html?hobbyId=${hobbyId}`;
-      };
-
-      document.getElementById("hobby-modal").style.display = "block";
-    } catch (err) {
-      alert("Could not load hobby details.");
     }
+
+    // Leave hobby group
+    async function leaveHobby(hobbyId) {
+      try {
+        const res = await fetch(`/api/hobbies/${hobbyId}/leave`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            "userId": userId
+          }
+        });
+        const data = await res.json();
+        alert(data.message || "Left hobby group");
+      } catch (err) {
+        alert("Error leaving hobby group.");
+      }
+    }
+
+    // Show hobby details in modal
+    async function viewHobbyDetails(hobbyId) {
+      try {
+        const res = await fetch(`/api/hobbies/${hobbyId}`);
+        const hobby = await res.json();
+
+        document.getElementById("modal-hobby-name").textContent = hobby.name;
+
+        const memberList = document.getElementById("modal-member-list");
+        memberList.innerHTML = "";
+
+        if (hobby.members && hobby.members.length > 0) {
+          hobby.members.forEach(member => {
+            const li = document.createElement("li");
+            li.textContent = `${member.name} (${member.email})`;
+            memberList.appendChild(li);
+          });
+        } else {
+          const li = document.createElement("li");
+          li.textContent = "No members yet.";
+          memberList.appendChild(li);
+        }
+
+        document.getElementById("modal-chat-btn").onclick = () => {
+          window.location.href = `groupChat.html?hobbyId=${hobbyId}`;
+        };
+
+        document.getElementById("hobby-modal").style.display = "block";
+      } catch (err) {
+        alert("Could not load hobby details.");
+      }
+    }
+
+    // Close modal when clicked outside
+    window.onclick = function (event) {
+      const modal = document.getElementById("hobby-modal");
+      if (event.target === modal) {
+        closeModal();
+      }
+    };
+
+    // Close modal function
+    function closeModal() {
+      document.getElementById("hobby-modal").style.display = "none";
+    }
+
+      function goToProfile() {
+    window.location.href = "viewProfile.html";
   }
 
-  window.onclick = function (event) {
-    const modal = document.getElementById("hobby-modal");
-    if (event.target === modal) {
-      closeModal();
-    }
-  };
-
-  window.onload = fetchHobbies;
-</script>
-
-
+    // Load hobbies on page load
     window.onload = fetchHobbies;
   </script>
+
 </body>
 </html>
