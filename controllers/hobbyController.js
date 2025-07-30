@@ -39,11 +39,7 @@ const getHobbyDetails = async (req, res) => {
 
 const joinHobby = async (req, res) => {
   const hobbyId = req.params.id;
-  const { userId } = req.body;
-
-  if (!userId) {
-    return res.status(400).json({ message: "Missing userId" });
-  }
+  const userId = req.userId;
 
   try {
     await hobbyModel.insertHobbyMember(userId, hobbyId);
@@ -60,13 +56,7 @@ const joinHobby = async (req, res) => {
 
 const leaveHobby = async (req, res) => {
   const hobbyId = req.params.id;
-  const { userId } = req.body;
-
-  console.log("Leave route hit:", { hobbyId, userId });
-
-  if (!userId) {
-    return res.status(400).json({ message: "Missing userId" });
-  }
+  const userId = req.userId;
 
   try {
     await hobbyModel.removeHobbyMember(userId, hobbyId);
