@@ -29,21 +29,4 @@ const poolPromise = new sql.ConnectionPool(config)
   })
   .catch(err => console.error('DB connection failed:', err));
 
-  // for medication.js
-async function query(sqlQuery, params = {}) {
-  const pool = await poolPromise;
-  const request = pool.request();
-
-  for (const key in params) {
-    request.input(key, params[key]);
-  }
-
-  return request.query(sqlQuery);
-}
-
-module.exports = { 
-  sql,
-  poolPromise,
-  query,
-  request: async () => (await poolPromise).request(),
-};
+module.exports = { sql, poolPromise };

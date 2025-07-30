@@ -1,63 +1,58 @@
-const {
-  fetchAllEvents,
-  fetchEventById,
-  insertRsvp,
-  deleteRsvp,
-  checkExistingRsvp,  // Import this function from your model
-} = require("../models/eventModel");
+const eventModel = require("../models/eventModel");
 
-// GET /api/events
-exports.getAllEvents = async (req, res) => {
+const getAllEvents = async (req, res) => {
   try {
-    const events = await fetchAllEvents();
+    const events = await eventModel.fetchAllEvents();
     res.json(events);
   } catch (err) {
-    console.error("Error fetching events:", err);
-    res.status(500).json({ message: "Error fetching events" });
+    res.status(500).json({ error: "Failed to fetch events" });
   }
 };
 
-// GET /api/events/:id
-exports.getEventById = async (req, res) => {
-  const eventId = parseInt(req.params.id);
+const getEventById = async (req, res) => {
   try {
-    const event = await fetchEventById(eventId);
+    const event = await eventModel.fetchEventById(req.params.id);
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
     res.json(event);
   } catch (err) {
-    console.error("Error fetching event:", err);
-    res.status(500).json({ message: "Error fetching event" });
+    res.status(500).json({ error: "Error fetching event" });
   }
 };
 
-// POST /api/events/:id/rsvp
-exports.rsvpToEvent = async (req, res) => {
-  const userId = req.userId;
-  const eventId = parseInt(req.params.id);
-  const { status } = req.body;
+const rsvpToEvent = async (req, res) => {
+  const eventId = req.params.id;
+  const { userId } = req.body;
 
   try {
-    await insertRsvp(userId, eventId, status || "going");
-    res.status(200).json({ message: "RSVP recorded" });
+    const defaultStatus = "going";
+    await eventModel.insertRsvp(userId, eventId, defaultStatus);
+    res.status(201).json({ message: "RSVP successful" });
   } catch (err) {
-    console.error("Error inserting RSVP:", err);
-    res.status(400).json({ message: err.message });  // Send error message to frontend
+    console.error("RSVP error:", err.message);
+    res.status(500).json({ error: "Failed to RSVP for event" });
   }
 };
 
 
-// DELETE /api/events/:id/unrsvp
-exports.unrsvpFromEvent = async (req, res) => {
-  const userId = req.userId;
-  const eventId = parseInt(req.params.id);
+const cancelRsvp = async (req, res) => {
+  const eventId = req.params.id;
+  const { userId } = req.body;
 
   try {
-    await deleteRsvp(userId, eventId);
-    res.status(200).json({ message: "RSVP removed" });
+    await eventModel.deleteRsvp(userId, eventId);
+    res.status(200).json({ message: "RSVP cancelled" });
   } catch (err) {
-    console.error("Error deleting RSVP:", err);
-    res.status(500).json({ message: "Error deleting RSVP" });
+    console.error("Cancel RSVP error:", err.message);
+    res.status(500).json({ error: "Failed to cancel RSVP" });
   }
+};
+
+
+module.exports = {
+  getAllEvents,
+  getEventById,
+  rsvpToEvent,
+  cancelRsvp,
 };
