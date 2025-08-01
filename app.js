@@ -29,6 +29,8 @@ const facilityRoutes = require("./routes/facilityRoutes");
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const userRoutes = require("./routes/userRoutes");
+const medicationRoutes = require("./routes/medicationRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes");
 
 // Mount routes
 app.use("/api/onemap", onemapRoutes);
@@ -40,6 +42,8 @@ app.use("/api/facilities", facilityRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api", userRoutes); // Mount userRoutes under /api
+app.use("/api/medications", medicationRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 // Test route
 app.get("/", (req, res) => {
