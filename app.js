@@ -12,6 +12,9 @@ const port = process.env.PORT || 3000;
 // Enable CORS
 app.use(cors());
 
+// Enable CORS
+app.use(cors());
+
 // Parse JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -19,20 +22,23 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, "public")));
 
-// Import routes
+// Route files
 const onemapRoutes = require("./onemap/onemapRoutes");
 const transportRoutes = require("./routes/transportRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const hobbyRoutes = require("./routes/hobbyRoutes");
 const groupchatRoutes = require("./routes/groupChatRoutes");
 const facilityRoutes = require("./routes/facilityRoutes");
-const authRoutes = require("./routes/authRoutes");
-const chatRoutes = require("./routes/chatRoutes");
+// const authRoutes = require("./routes/authRoutes");
+// const medicationRoutes = require("./routes/medicationRoutes");
+// const chatRoutes = require("./routes/chatRoutes");
+// const appointmentRoutes = require("./routes/appointmentRoutes");
+// const accessibilityRoutes = require("./routes/accessibilityRoutes");
 const userRoutes = require("./routes/userRoutes");
 const medicationRoutes = require("./routes/medicationRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 
-// Mount routes
+// Mount all routes under API prefixes
 app.use("/api/onemap", onemapRoutes);
 app.use("/api/transport", transportRoutes);
 app.use("/api/events", eventRoutes);

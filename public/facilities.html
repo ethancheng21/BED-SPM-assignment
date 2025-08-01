@@ -6,17 +6,72 @@
   <title>Nearby Facilities</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
-    body { margin: 0; font-family: Arial, sans-serif; display: flex; }
-    #map { height: 100vh; width: 70vw; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Full height of the page */
+      overflow: hidden; /* Prevent scrolling on the body */
+    }
+
+    /* Navbar styles */
+    header {
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10; /* Ensure navbar stays above map */
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    /* Main content layout */
+    .main-container {
+      display: flex;
+      flex-grow: 1;
+      overflow: hidden; /* Prevent page from scrolling */
+    }
+
+    #map {
+      flex: 1;
+      height: calc(100vh - 50px); /* Map fills the space minus the navbar height */
+    }
+
     #sidebar {
       width: 30vw;
-      height: 100vh;
-      overflow-y: auto;
+      height: calc(100vh - 50px); /* Sidebar height adjusted to take full height minus navbar */
+      overflow-y: auto; /* Sidebar should scroll if content overflows */
       padding: 1rem;
-      box-shadow: inset 0 0 5px #ccc;
-      background-color: #f9f9f9;
+      background-color: #f4f6f8;
+      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+      position: relative;
+      z-index: 1;
     }
-    h2 { margin-top: 0; }
+
+    h2 {
+      margin-top: 0;
+      font-size: 1.4rem;
+      color: #333;
+    }
+
     .facility {
       padding: 10px;
       margin-bottom: 10px;
@@ -24,25 +79,93 @@
       border-radius: 5px;
       background-color: #fff;
     }
-    .facility strong { display: block; margin-bottom: 5px; }
-    .facility small { color: #666; }
+
+    .facility strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .facility small {
+      color: #666;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      font-weight: bold;
+      color: white;
+      background-color: #0077cc;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #005fa3;
+      transform: scale(1.02);
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .fade-out {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    /* 🧽 Clean popup styling */
+    .leaflet-popup-content-wrapper {
+      background: #0077cc;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    }
+
+    .leaflet-popup-tip {
+      background: #0077cc;
+    }
+
+    .leaflet-popup-close-button {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div id="map"></div>
-  <div id="sidebar">
-    <h2>Nearby Facilities</h2>
-    <div id="facilityList">Loading...</div>
+  <!-- Simplified Navbar -->
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="home.html">Home</a> <!-- Link to Home page -->
+    </nav>
+  </header>
+
+  <div class="main-container">
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <h2>Nearby Facilities</h2>
+      <div id="facilityList">Loading...</div>
+    </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     const map = L.map("map").setView([1.3521, 103.8198], 12);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://carto.com/">CartoDB</a>',
-  subdomains: 'abcd',
-  maxZoom: 19
-}).addTo(map);
+      attribution: '&copy; <a href="https://carto.com/">CartoDB</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }).addTo(map);
 
     const blueIcon = L.icon({
       iconUrl: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",

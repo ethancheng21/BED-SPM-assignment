@@ -26,7 +26,8 @@ const getMessages = async (req, res) => {
 
 const postMessage = async (req, res) => {
   const { hobbyId } = req.params;
-  const { userId, content } = req.body;
+  const { content } = req.body;
+  const userId = req.userId;
 
   if (!userId || !content) {
     return res.status(400).json({ message: "Missing userId or content" });
@@ -45,6 +46,7 @@ const postMessage = async (req, res) => {
     res.status(500).json({ message: "Failed to send message" });
   }
 };
+
 
 module.exports = {
   getMessages,

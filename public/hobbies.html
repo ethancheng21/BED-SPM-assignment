@@ -19,39 +19,46 @@
     </div>
   </div>
 
-  <!-- Navbar -->
-  <nav class="nav-bar">
-    <div class="nav-container">
-      <div class="nav-logo">LOGO</div>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Events</a></li>
-        <li><a href="#">Hobbies</a></li>
-        <li><a href="#">Chat</a></li>
-        <li><a href="#">FAQ</a></li>
-      </ul>
-      <button class="nav-login">Login</button>
-    </div>
-  </nav>
+  <!-- Header and Nav Bar -->
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="#">Healthier SG</a>
+      <a href="#">Health A-Z</a>
+      <a href="#">Live Healthy</a>
+      <a href="#">Mental Well-Being</a>
+      <a href="#">Parent Hub</a>
+      <a href="#">Health Programmes</a>
+      <a href="#">Health Services</a>
+      <button class="action-btn" onclick="goToProfile()">View Profile</button>
+      <button class="action-btn" onclick="logout()">Logout</button>
+    </nav>
+  </header>
 
-  <!-- Page Content -->
-  <h1 style="text-align: center;">Hobby Groups</h1>
-
-  <label for="user-select">Select User:</label>
-  <select id="user-select">
-    <option value="1">User 1</option>
-    <option value="2">User 2</option>
-  </select>
+  <!-- Page content -->
+  <h1>Hobby Groups</h1>
 
   <div id="hobby-list"></div>
 
   <script>
+    // Check if user is logged in
+    const userId = localStorage.getItem("userId");
+    const userName = localStorage.getItem("userName");
+
+    if (!userId) {
+      alert("Please log in first.");
+      window.location.href = "home.html";
+    } else {
+      
+    }
+
+    // Fetch and display hobbies
     async function fetchHobbies() {
       const res = await fetch("/api/hobbies");
       const hobbies = await res.json();
 
       const container = document.getElementById("hobby-list");
-      container.innerHTML = "";
+      container.innerHTML = ""; // Clear any existing content
 
       hobbies.forEach(hobby => {
         const card = document.createElement("div");
@@ -67,13 +74,15 @@
       });
     }
 
+    // Join hobby group
     async function joinHobby(hobbyId) {
-      const userId = document.getElementById("user-select").value;
       try {
         const res = await fetch(`/api/hobbies/${hobbyId}/join`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId })
+          headers: {
+            "Content-Type": "application/json",
+            "userId": userId
+          }
         });
         const data = await res.json();
         alert(data.message || "Joined hobby group");
@@ -82,13 +91,15 @@
       }
     }
 
+    // Leave hobby group
     async function leaveHobby(hobbyId) {
-      const userId = document.getElementById("user-select").value;
       try {
         const res = await fetch(`/api/hobbies/${hobbyId}/leave`, {
           method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId })
+          headers: {
+            "Content-Type": "application/json",
+            "userId": userId
+          }
         });
         const data = await res.json();
         alert(data.message || "Left hobby group");
@@ -97,10 +108,7 @@
       }
     }
 
-    function closeModal() {
-      document.getElementById("hobby-modal").style.display = "none";
-    }
-
+    // Show hobby details in modal
     async function viewHobbyDetails(hobbyId) {
       try {
         const res = await fetch(`/api/hobbies/${hobbyId}`);
@@ -123,18 +131,17 @@
           memberList.appendChild(li);
         }
 
-        // 🔁 Dynamic chat link
         document.getElementById("modal-chat-btn").onclick = () => {
           window.location.href = `groupChat.html?hobbyId=${hobbyId}`;
         };
 
         document.getElementById("hobby-modal").style.display = "block";
       } catch (err) {
-        console.error("Error loading hobby details:", err);
         alert("Could not load hobby details.");
       }
     }
 
+    // Close modal when clicked outside
     window.onclick = function (event) {
       const modal = document.getElementById("hobby-modal");
       if (event.target === modal) {
@@ -142,7 +149,18 @@
       }
     };
 
+    // Close modal function
+    function closeModal() {
+      document.getElementById("hobby-modal").style.display = "none";
+    }
+
+      function goToProfile() {
+    window.location.href = "viewProfile.html";
+  }
+
+    // Load hobbies on page load
     window.onload = fetchHobbies;
   </script>
+
 </body>
 </html>

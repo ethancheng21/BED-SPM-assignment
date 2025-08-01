@@ -8,112 +8,122 @@
 </head>
 <body>
 
-<nav class="nav-bar">
-  <div class="nav-container">
-    <div class="nav-logo">LOGO</div>
-    <ul class="nav-links">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Events</a></li>
-      <li><a href="#">Map</a></li>
-      <li><a href="#">Chat</a></li>
-      <li><a href="#">FAQ</a></li>
-    </ul>
-    <button class="nav-login">Login</button>
-  </div>
-</nav>
 
+<header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <nav>
+      <a href="#">Healthier SG</a>
+      <a href="#">Health A-Z</a>
+      <a href="#">Live Healthy</a>
+      <a href="#">Mental Well-Being</a>
+      <a href="#">Parent Hub</a>
+      <a href="#">Health Programmes</a>
+      <a href="#">Health Services</a>
+      <button class="action-btn" onclick="goToProfile()">View Profile</button>
+      <button class="action-btn" onclick="logout()">Logout</button>
+    </nav>
+  </header>
+<!-- Page content remains the same -->
+<h1>Community Events</h1>
 
+<div id="event-list"></div>
 
+<script>
+  // ✅ Login check
+  const userId = localStorage.getItem("userId");
+  const userName = localStorage.getItem("userName");
 
-  <h1>Community Events</h1>
-    <label for="user-select">Select User:</label>
-  <select id="user-select">
-    <option value="1">User 1</option>
-    <option value="2">User 2</option>
-  </select>
-
-  <div id="event-list"></div>
-
-  <script>
-    const userId = document.getElementById("user-select").value;
+  if (!userId) {
+    alert("Please login first.");
+    window.location.href = "home.html";
+  } else {
     
-    function formatTime(rawTime) {
-      if (!rawTime) return "N/A";
+  }
 
-      const date = new Date(rawTime);
-      return date.toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
+  // ✅ Logout function
+  function logout() {
+    localStorage.clear();
+    window.location.href = "home.html";
+  }
+
+  // ✅ Format time nicely
+  function formatTime(rawTime) {
+    if (!rawTime) return "N/A";
+    const date = new Date(rawTime);
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true
+    });
+  }
+
+  // ✅ Fetch and display all events
+  async function fetchEvents() {
+    const res = await fetch("/api/events");
+    const events = await res.json();
+
+    const container = document.getElementById("event-list");
+    container.innerHTML = "";
+
+    events.forEach(event => {
+      const card = document.createElement("div");
+      card.className = "event-card";
+      card.innerHTML = `
+        <h3>${event.title}</h3>
+        <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+        <p><strong>Time:</strong> ${formatTime(event.time)}</p>
+        <p><strong>Location:</strong> ${event.location}</p>
+        <p>${event.description}</p>
+        <button onclick="rsvp(${event.event_id})">RSVP</button>
+        <button onclick="cancelRsvp(${event.event_id})" class="cancel-btn">Cancel RSVP</button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // ✅ RSVP function
+  async function rsvp(eventId) {
+    try {
+      const res = await fetch(`/api/events/${eventId}/rsvp`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "userId": userId
+        },
+        body: JSON.stringify({ status: "going" })
       });
+
+      const data = await res.json();
+      alert(data.message || "RSVP successful");
+    } catch (err) {
+      alert("Error RSVPing for event.");
     }
+  }
 
-
-
-    async function fetchEvents() {
-      const res = await fetch("/api/events");
-      const events = await res.json();
-
-      const container = document.getElementById("event-list");
-      container.innerHTML = "";
-
-      console.log("Fetched events:", events);
-
-      events.forEach(event => {
-        const card = document.createElement("div");
-        card.className = "event-card";
-        card.innerHTML = `
-          <h3>${event.title}</h3>
-          <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
-<p><strong>Time:</strong> ${formatTime(event.time)}</p>
-
-
-
-          <p><strong>Location:</strong> ${event.location}</p>
-          <p>${event.description}</p>
-          <button onclick="rsvp(${event.event_id})">RSVP</button>
-          <button onclick="cancelRsvp(${event.event_id})" class="cancel-btn">Cancel RSVP</button>
-        `;
-        container.appendChild(card);
+  // ✅ Cancel RSVP function
+  async function cancelRsvp(eventId) {
+    try {
+      const res = await fetch(`/api/events/${eventId}/unrsvp`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "userId": userId
+        }
       });
+
+      const data = await res.json();
+      alert(data.message || "RSVP cancelled");
+    } catch (err) {
+      alert("Error cancelling RSVP.");
     }
+  }
+    function goToProfile() {
+    window.location.href = "viewProfile.html";
+  } 
 
-    async function rsvp(eventId) {
-      const userId = document.getElementById("user-select").value;
+  // ✅ Load events when page opens
+  window.onload = fetchEvents;
+</script>
 
-      try {
-        const res = await fetch(`/api/events/${eventId}/rsvp`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId })
-        });
-
-        const data = await res.json();
-        alert(data.message || "RSVP successful");
-      } catch (err) {
-        alert("Error RSVPing for event.");
-      }
-    }
-
-    async function cancelRsvp(eventId) {
-      const userId = document.getElementById("user-select").value;
-
-      try {
-        const res = await fetch(`/api/events/${eventId}/rsvp`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId })
-        });
-
-        const data = await res.json();
-        alert(data.message || "RSVP cancelled");
-      } catch (err) {
-        alert("Error cancelling RSVP.");
-      }
-    }
-
-
-    window.onload = fetchEvents;
-  </script>
 </body>
 </html>
