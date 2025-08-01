@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Medical Appointments</title>
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet" />
+
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      max-width: 400px;
+    }
+    #calendar {
+      max-width: 900px;
+      margin: 40px auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Medical Appointment Tracker</h1>
+
+  <form id="apptForm">
+    <input type="text" id="doctor_name" placeholder="Doctor's Name" required><br>
+    <input type="text" id="location" placeholder="Location" required><br>
+    <input type="datetime-local" id="appointment_date" required><br>
+    <textarea id="notes" placeholder="Notes (optional)"></textarea><br>
+    <button type="submit">Add Appointment</button>
+  </form>
+
+  <hr>
+
+  <div id="calendar"></div>
+
+  <script>
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+        alert("Please login first.");
+        window.location.href = "/auth.html";
+    }
+    const form = document.getElementById("apptForm");
+
+    async function fetchAppointments() {
+      const res = await fetch(`/api/appointments/user/${userId}/upcoming`);
+      const data = await res.json();
+
+      return data.map(appt => ({
+        title: `Dr. ${appt.doctor_name} @ ${appt.location}`,
+        start: appt.appointment_date,
+        extendedProps: { notes: appt.notes }
+      }));
+    }
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      const calendarEl = document.getElementById("calendar");
+
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        height: 600,
+        events: await fetchAppointments(),
+        eventClick: function (info) {
+          alert(`${info.event.title}\nNotes: ${info.event.extendedProps.notes || "None"}`);
+        }
+      });
+
+      calendar.render();
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        // ✅ Fix SQL date format: convert to "YYYY-MM-DD HH:MM:SS"
+        const rawDate = document.getElementById("appointment_date").value;
+        const dateObj = new Date(rawDate);
+        const appointmentDate = dateObj.toISOString().slice(0, 19).replace("T", " ");
+
+        const body = {
+          user_id: userId,
+          doctor_name: document.getElementById("doctor_name").value,
+          location: document.getElementById("location").value,
+          appointment_date: appointmentDate, // formatted safely for SQL
+          notes: document.getElementById("notes").value,
+        };
+
+        const res = await fetch("/api/appointments", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        if (res.ok) {
+          alert("Appointment added!");
+          form.reset();
+          calendar.removeAllEvents();
+          calendar.addEventSource(await fetchAppointments());
+        } else {
+          alert("Failed to add appointment.");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

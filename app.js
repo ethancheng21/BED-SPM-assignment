@@ -12,9 +12,6 @@ const port = process.env.PORT || 3000;
 // Enable CORS
 app.use(cors());
 
-// Enable CORS
-app.use(cors());
-
 // Parse JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,23 +24,23 @@ const onemapRoutes = require("./onemap/onemapRoutes");
 const transportRoutes = require("./routes/transportRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const facilityRoutes = require("./routes/facilityRoutes");
-// const authRoutes = require("./routes/authRoutes");
-// const medicationRoutes = require("./routes/medicationRoutes");
-// const chatRoutes = require("./routes/chatRoutes");
-// const appointmentRoutes = require("./routes/appointmentRoutes");
-// const accessibilityRoutes = require("./routes/accessibilityRoutes");
+const authRoutes = require("./routes/authRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const accessibilityRoutes = require("./routes/accessibilityRoutes");
 const userRoutes = require("./routes/userRoutes");
+const medicationRoutes = require("./routes/medicationRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes");
 
 // Mount all routes under API prefixes
 app.use("/api/onemap", onemapRoutes);
 app.use("/api/transport", transportRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/facilities", facilityRoutes);
-// app.use("/api/auth", authRoutes);
-// app.use("/api/medications", medicationRoutes);
-// app.use("/api/chat", chatRoutes);
-// app.use("/api/appointments", appointmentRoutes);
-// app.use("/api/accessibility", accessibilityRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api", userRoutes); // Mount userRoutes under /api
+app.use("/api/medications", medicationRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 // Test route
 app.get("/", (req, res) => {
