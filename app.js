@@ -30,6 +30,10 @@ const accessibilityRoutes = require("./routes/accessibilityRoutes");
 const userRoutes = require("./routes/userRoutes");
 const medicationRoutes = require("./routes/medicationRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
+const hobbyRoutes = require("./routes/hobbyRoutes")
+const groupChatRoutes = require("./routes/groupChatRoutes");
+const faqRoutes = require("./routes/faqRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes")
 
 // Mount all routes under API prefixes
 app.use("/api/onemap", onemapRoutes);
@@ -41,6 +45,10 @@ app.use("/api/chat", chatRoutes);
 app.use("/api", userRoutes); // Mount userRoutes under /api
 app.use("/api/medications", medicationRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/hobbies",hobbyRoutes)
+app.use("/api/groupChat", groupChatRoutes);
+app.use("/api/faqs", faqRoutes);
+app.use("/api/feedback",feedbackRoutes)
 
 // Test route
 app.get("/", (req, res) => {

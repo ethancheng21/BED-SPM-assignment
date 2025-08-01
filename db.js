@@ -26,8 +26,27 @@ const poolPromise = new sql.ConnectionPool(config)
   })
   .catch(err => console.error("DB connection failed:", err));
 
-// Export the poolPromise to be used in the model for querying the database
-module.exports = { sql, poolPromise };
 
+// Define query function
+async function query(sqlQuery, params = {}) {
+  const pool = await poolPromise;
+  const request = pool.request();
 
+  // Bind parameters to the query
+  for (const key in params) {
+    request.input(key, params[key]);
+  }
+
+  // Execute the query
+  const result = await request.query(sqlQuery);
+  return result;
+}
+
+// Export query and poolPromise
+module.exports = {
+  sql,
+  poolPromise,
+  query, // Make sure query is exported
+  request: async () => (await poolPromise).request(),
+};
 
