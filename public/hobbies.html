@@ -188,6 +188,12 @@
       color: #e0e0e0;
     }
 
+    body.dark-mode header {
+    background-color: #1e1e1e;
+    border-bottom-color: #444;
+    }
+
+
     body.dark-mode .nav-links a {
       color: white;
     }
@@ -270,12 +276,28 @@
       window.location.href = "home.html";
     }
 
+      (function applyStoredTheme() {
     const storedTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', storedTheme);
-
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark-mode");
+    if (storedTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
     }
+  })();
+
+  function toggleDarkMode() {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+  }
+
+  function goToProfile() {
+    window.location.href = "viewProfile.html";
+  }
+
+  function logout() {
+    localStorage.clear();
+    window.location.href = "home.html";
+  }
 
     async function fetchHobbies() {
       const res = await fetch("/api/hobbies");
@@ -369,9 +391,6 @@
       document.getElementById("hobby-modal").style.display = "none";
     }
 
-    function goToProfile() {
-      window.location.href = "viewProfile.html";
-    }
 
     window.onload = fetchHobbies;
   </script>
