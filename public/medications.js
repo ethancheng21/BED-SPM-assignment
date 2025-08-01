@@ -1,4 +1,8 @@
-const userId = 1; // Hardcoded for testing
+const userId = localStorage.getItem("userId");
+if (!userId) {
+  alert("Please login first.");
+  window.location.href = "/auth.html";
+}
 const form = document.getElementById("medForm");
 const medList = document.getElementById("medList");
 

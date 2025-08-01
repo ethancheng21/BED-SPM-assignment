@@ -40,7 +40,11 @@
   <div id="calendar"></div>
 
   <script>
-    const userId = 1;
+    const userId = localStorage.getItem("userId");
+    if (!userId) {
+        alert("Please login first.");
+        window.location.href = "/auth.html";
+    }
     const form = document.getElementById("apptForm");
 
     async function fetchAppointments() {
