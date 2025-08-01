@@ -4,10 +4,226 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hobby Groups</title>
-  <link rel="stylesheet" href="events.css" />
-</head>
-<body>
 
+  <style>
+    /* === START of events.css content === */
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #111;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;  /* instead of 16px 32px */
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 80px;
+  }
+
+
+    header * {
+      line-height: 1;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+      .nav-links {
+    flex: 1;
+    display: flex;
+    justify-content: center;  /* center nav links horizontally */
+    gap: 2rem;                /* space between links */
+  }
+
+
+  .nav-links a {
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: 10px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+  }
+
+    .nav-links a:hover {
+      background-color: #f4f4f4;
+      color: #005b96;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .action-btn {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    #hobby-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      margin: 40px auto;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    .event-card {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    .event-card h3 {
+      margin-top: 0;
+    }
+
+    button {
+      margin-top: 10px;
+      margin-right: 10px;
+      padding: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .cancel-btn {
+      background-color: #e74c3c;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px 30px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      text-align: center;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 16px;
+      font-size: 24px;
+      cursor: pointer;
+    }
+
+    #modal-member-list {
+      text-align: left;
+      padding-left: 0;
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    #modal-chat-btn {
+      background-color: #50b948;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .nav-links a {
+      color: white;
+    }
+
+    body.dark-mode .nav-links a:hover {
+      background-color: transparent;
+      color: orange;
+    }
+
+    body.dark-mode .event-card {
+      background-color: #1e1e1e;
+      color: #eee;
+    }
+
+    body.dark-mode .modal-content {
+      background-color: #1e1e1e;
+      color: #fff;
+    }
+
+    body.dark-mode .close-btn {
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      #hobby-list {
+        flex-direction: column;
+        align-items: center;
+        padding: 0 10px;
+      }
+    }
+
+    /* === END of events.css content === */
+  </style>
+</head>
+
+<body>
   <!-- Hobby Modal -->
   <div id="hobby-modal" class="modal">
     <div class="modal-content">
@@ -19,46 +235,53 @@
     </div>
   </div>
 
-  <!-- Header and Nav Bar -->
+  <!-- Header -->
   <header>
     <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
-    <nav>
-      <a href="#">Healthier SG</a>
-      <a href="#">Health A-Z</a>
-      <a href="#">Live Healthy</a>
-      <a href="#">Mental Well-Being</a>
-      <a href="#">Parent Hub</a>
-      <a href="#">Health Programmes</a>
-      <a href="#">Health Services</a>
+    <div class="nav-links">
+      <a href="home1.html">Home</a>
+      <a href="#faq">FAQ</a>
+      <a href="help-feedback.html">Help</a>
+    </div>
+    <div class="header-buttons">
+      <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
+        <span id="darkIcon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/>
+          </svg>
+        </span>
+      </button>
       <button class="action-btn" onclick="goToProfile()">View Profile</button>
       <button class="action-btn" onclick="logout()">Logout</button>
-    </nav>
+    </div>
   </header>
 
-  <!-- Page content -->
+  <!-- Main Content -->
   <h1>Hobby Groups</h1>
-
   <div id="hobby-list"></div>
 
+  <!-- JavaScript -->
   <script>
-    // Check if user is logged in
     const userId = localStorage.getItem("userId");
     const userName = localStorage.getItem("userName");
 
     if (!userId) {
       alert("Please log in first.");
       window.location.href = "home.html";
-    } else {
-      
     }
 
-    // Fetch and display hobbies
+    const storedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', storedTheme);
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
     async function fetchHobbies() {
       const res = await fetch("/api/hobbies");
       const hobbies = await res.json();
-
       const container = document.getElementById("hobby-list");
-      container.innerHTML = ""; // Clear any existing content
+      container.innerHTML = "";
 
       hobbies.forEach(hobby => {
         const card = document.createElement("div");
@@ -74,7 +297,6 @@
       });
     }
 
-    // Join hobby group
     async function joinHobby(hobbyId) {
       try {
         const res = await fetch(`/api/hobbies/${hobbyId}/join`, {
@@ -86,12 +308,11 @@
         });
         const data = await res.json();
         alert(data.message || "Joined hobby group");
-      } catch (err) {
+      } catch {
         alert("Error joining hobby group.");
       }
     }
 
-    // Leave hobby group
     async function leaveHobby(hobbyId) {
       try {
         const res = await fetch(`/api/hobbies/${hobbyId}/leave`, {
@@ -103,19 +324,17 @@
         });
         const data = await res.json();
         alert(data.message || "Left hobby group");
-      } catch (err) {
+      } catch {
         alert("Error leaving hobby group.");
       }
     }
 
-    // Show hobby details in modal
     async function viewHobbyDetails(hobbyId) {
       try {
         const res = await fetch(`/api/hobbies/${hobbyId}`);
         const hobby = await res.json();
 
         document.getElementById("modal-hobby-name").textContent = hobby.name;
-
         const memberList = document.getElementById("modal-member-list");
         memberList.innerHTML = "";
 
@@ -136,31 +355,25 @@
         };
 
         document.getElementById("hobby-modal").style.display = "block";
-      } catch (err) {
+      } catch {
         alert("Could not load hobby details.");
       }
     }
 
-    // Close modal when clicked outside
-    window.onclick = function (event) {
+    window.onclick = function(event) {
       const modal = document.getElementById("hobby-modal");
-      if (event.target === modal) {
-        closeModal();
-      }
+      if (event.target === modal) closeModal();
     };
 
-    // Close modal function
     function closeModal() {
       document.getElementById("hobby-modal").style.display = "none";
     }
 
-      function goToProfile() {
-    window.location.href = "viewProfile.html";
-  }
+    function goToProfile() {
+      window.location.href = "viewProfile.html";
+    }
 
-    // Load hobbies on page load
     window.onload = fetchHobbies;
   </script>
-
 </body>
 </html>

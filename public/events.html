@@ -2,86 +2,267 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Event List</title>
-  <link rel="stylesheet" href="events.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Community Events</title>
+  <style>
+    /* Reset and base */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #111;
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    html, body {
+      width: 100%; max-width: 100%;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #eee;
+      min-height: 80px;
+      width: 100%;
+    }
+    header * {
+      line-height: 1;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+    .nav-links {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+    }
+    /* Nav links default */
+  .nav-links a {
+    text-decoration: none;
+    color: #333;              /* dark gray in light mode */
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    transition: background 0.3s, color 0.3s;
+  }
+    /* Nav links hover light mode */
+  .nav-links a:hover {
+    background-color: #f4f4f4;
+    color: #005b96;           /* blue */
+  }
+    .header-buttons {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .action-btn {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Title */
+    h1 {
+      text-align: center;
+      margin: 2rem 0 3rem;
+    }
+
+    /* Event list container */
+    #event-list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+      margin: 0 auto 4rem;
+      max-width: 1000px;
+      padding: 0 20px;
+    }
+
+    /* Event card */
+    .event-card {
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      color: #111;
+      transition: background 0.3s, color 0.3s;
+    }
+    .event-card h3 {
+      margin-top: 0;
+    }
+    .event-card p {
+      margin: 0.3rem 0;
+    }
+
+    /* Buttons */
+    button {
+      margin-top: 10px;
+      margin-right: 10px;
+      padding: 10px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .cancel-btn {
+      background-color: #e74c3c;
+    }
+    .cancel-btn:hover {
+      background-color: #c0392b;
+    }
+
+    /* Dark mode */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    /* Dark mode nav links */
+    body.dark-mode .nav-links a {
+      color: white;             /* white text in dark mode */
+    }
+
+    body.dark-mode .nav-links a {
+      color: white;
+    }
+    body.dark-mode .nav-links a:hover {
+      background-color: transparent; /* no bg */
+      color: orange;            /* highlight orange on hover */
+    }
+    body.dark-mode .event-card {
+      background-color: #1e1e1e;
+      color: #eee;
+      border-color: #444;
+      box-shadow: none;
+    }
+    body.dark-mode .action-btn {
+      background-color: orange;
+      color: white;
+    }
+
+    body.dark-mode header {
+    background-color: #1e1e1e; /* dark header background */
+    border-bottom-color: #444; /* subtle border */
+    }
+
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      #event-list {
+        flex-direction: column;
+        max-width: 100%;
+        gap: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
 
-
 <header>
-    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
-    <nav>
-      <a href="#">Healthier SG</a>
-      <a href="#">Health A-Z</a>
-      <a href="#">Live Healthy</a>
-      <a href="#">Mental Well-Being</a>
-      <a href="#">Parent Hub</a>
-      <a href="#">Health Programmes</a>
-      <a href="#">Health Services</a>
-      <button class="action-btn" onclick="goToProfile()">View Profile</button>
-      <button class="action-btn" onclick="logout()">Logout</button>
-    </nav>
-  </header>
-<!-- Page content remains the same -->
+  <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+  <nav class="nav-links">
+    <a href="home1.html">Home</a>
+    <a href="#faq">FAQ</a>
+    <a href="help-feedback.html">Help</a>
+  </nav>
+  <div class="header-buttons">
+    <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
+      <span id="darkIcon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/></svg>
+      </span>
+    </button>
+    <button class="action-btn" onclick="goToProfile()">View Profile</button>
+    <button class="action-btn" onclick="logout()">Logout</button>
+  </div>
+</header>
+
 <h1>Community Events</h1>
 
 <div id="event-list"></div>
- 
+
 <script>
-  // ✅ Login check
   const userId = localStorage.getItem("userId");
   const userName = localStorage.getItem("userName");
 
   if (!userId) {
     alert("Please login first.");
     window.location.href = "home.html";
-  } else {
-    
   }
 
-  // ✅ Logout function
-  function logout() {
-    localStorage.clear();
-    window.location.href = "home.html";
+  const storedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', storedTheme);
+
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+    if(document.body.classList.contains("dark-mode")){
+      localStorage.setItem('theme', 'dark');
+    } else {
+      localStorage.setItem('theme', 'light');
+    }
   }
 
-  // ✅ Format time nicely
+  async function fetchEvents() {
+    try {
+      const res = await fetch("/api/events");
+      if (!res.ok) throw new Error("Network response was not ok");
+      const events = await res.json();
+
+      const container = document.getElementById("event-list");
+      container.innerHTML = "";
+
+      events.forEach(event => {
+        const card = document.createElement("div");
+        card.className = "event-card";
+        card.innerHTML = `
+          <h3>${event.title}</h3>
+          <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
+          <p><strong>Time:</strong> ${formatTime(event.time)}</p>
+          <p><strong>Location:</strong> ${event.location}</p>
+          <p>${event.description}</p>
+          <button onclick="rsvp(${event.event_id})">RSVP</button>
+          <button onclick="cancelRsvp(${event.event_id})" class="cancel-btn">Cancel RSVP</button>
+        `;
+        container.appendChild(card);
+      });
+    } catch (error) {
+      alert("Failed to load events.");
+      console.error(error);
+    }
+  }
+
   function formatTime(rawTime) {
     if (!rawTime) return "N/A";
     const date = new Date(rawTime);
-    return date.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true
-    });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: true });
   }
 
-  // ✅ Fetch and display all events
-  async function fetchEvents() {
-    const res = await fetch("/api/events");
-    const events = await res.json();
-
-    const container = document.getElementById("event-list");
-    container.innerHTML = "";
-
-    events.forEach(event => {
-      const card = document.createElement("div");
-      card.className = "event-card";
-      card.innerHTML = `
-        <h3>${event.title}</h3>
-        <p><strong>Date:</strong> ${new Date(event.date).toLocaleDateString()}</p>
-        <p><strong>Time:</strong> ${formatTime(event.time)}</p>
-        <p><strong>Location:</strong> ${event.location}</p>
-        <p>${event.description}</p>
-        <button onclick="rsvp(${event.event_id})">RSVP</button>
-        <button onclick="cancelRsvp(${event.event_id})" class="cancel-btn">Cancel RSVP</button>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  // ✅ RSVP function
   async function rsvp(eventId) {
     try {
       const res = await fetch(`/api/events/${eventId}/rsvp`, {
@@ -92,15 +273,13 @@
         },
         body: JSON.stringify({ status: "going" })
       });
-
       const data = await res.json();
       alert(data.message || "RSVP successful");
-    } catch (err) {
+    } catch {
       alert("Error RSVPing for event.");
     }
   }
 
-  // ✅ Cancel RSVP function
   async function cancelRsvp(eventId) {
     try {
       const res = await fetch(`/api/events/${eventId}/unrsvp`, {
@@ -110,20 +289,25 @@
           "userId": userId
         }
       });
-
       const data = await res.json();
       alert(data.message || "RSVP cancelled");
-    } catch (err) {
+    } catch {
       alert("Error cancelling RSVP.");
     }
   }
-    function goToProfile() {
-    window.location.href = "viewProfile.html";
-  } 
 
-  // ✅ Load events when page opens
-  window.onload = fetchEvents;
+  function goToProfile() {
+    window.location.href = "viewProfile.html";
+  }
+
+  window.onload = () => {
+    if (storedTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+    fetchEvents();
+  };
 </script>
+
 
 </body>
 </html>
