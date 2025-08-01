@@ -7,3 +7,4 @@ const feedbackController = require('../controllers/feedbackController');
 router.post('/', feedbackController.submitFeedback);
 
 module.exports = router;
+    
