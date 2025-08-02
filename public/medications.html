@@ -2,16 +2,166 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Medication Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medications</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #111;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .action-btn {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-top: 1rem;
+      color: #002855;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 1rem auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input, textarea {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button[type="submit"] {
+      background-color: orange;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 5px;
+    }
+
+    ul#medList {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+
+    ul#medList li {
+      background: #f4f4f4;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    ul#medList button {
+      background-color: #c0392b;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      margin-top: 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Dark mode */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode nav a,
+    body.dark-mode .logo {
+      color: white;
+    }
+
+    body.dark-mode h1, body.dark-mode h2 {
+      color: orange;
+    }
+
+    body.dark-mode input,
+    body.dark-mode textarea {
+      background-color: #1e1e1e;
+      color: white;
+      border: 1px solid #333;
+    }
+
+    body.dark-mode ul#medList li {
+      background-color: #1e1e1e;
+      color: white;
+    }
+  </style>
 </head>
 <body>
+    <header>
+      <div class="logo">Lions<span style="color:#005b96;">Befrienders</span></div>
+      <nav class="nav-links">
+        <a href="home1.html">Home</a>
+        <a href="#faq">FAQ</a>
+        <a href="help-feedback.html">Help</a>
+      </nav>
+      <div class="header-buttons">
+        <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
+          <span id="darkIcon"></span>
+        </button>
+        <a class="action-btn" href="#" onclick="logout()">Logout</a>
+      </div>
+  </header>
+
   <h1>Daily Medications</h1>
 
   <form id="medForm">
-    <input type="text" id="name" placeholder="Medication Name" required><br>
-    <input type="text" id="dosage" placeholder="Dosage" required><br>
-    <input type="time" id="schedule_time" required><br>
-    <textarea id="instructions" placeholder="Instructions (optional)"></textarea><br>
+    <input type="text" id="name" placeholder="Medication Name" required>
+    <input type="text" id="dosage" placeholder="Dosage" required>
+    <input type="time" id="schedule_time" required>
+    <textarea id="instructions" placeholder="Instructions (optional)"></textarea>
     <button type="submit">Add Medication</button>
   </form>
 
@@ -19,5 +169,28 @@
   <ul id="medList"></ul>
 
   <script src="medications.js"></script>
+  <script>
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      updateDarkIcon(isDark);
+    }
+
+    function updateDarkIcon(isDark) {
+      const icon = isDark
+        ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="#ffffff"><circle cx="12" cy="12" r="10"/></svg>`
+        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#005b96" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/></svg>`;
+      document.getElementById("darkIcon").innerHTML = icon;
+    }
+
+    function applySavedTheme() {
+      const saved = localStorage.getItem("theme");
+      const isDark = saved === "dark";
+      if (isDark) document.body.classList.add("dark-mode");
+      updateDarkIcon(isDark);
+    }
+
+    applySavedTheme();
+  </script>
 </body>
 </html>
