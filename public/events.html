@@ -185,23 +185,16 @@
 </head>
 <body>
 
-<header>
-  <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
-  <nav class="nav-links">
-    <a href="home1.html">Home</a>
-    <a href="#faq">FAQ</a>
-    <a href="help-feedback.html">Help</a>
-  </nav>
-  <div class="header-buttons">
-    <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
-      <span id="darkIcon">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/></svg>
-      </span>
-    </button>
-    <button class="action-btn" onclick="goToProfile()">View Profile</button>
-    <button class="action-btn" onclick="logout()">Logout</button>
-  </div>
-</header>
+<div id="header-placeholder"></div>
+
+<script>
+  fetch('header.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('header-placeholder').innerHTML = data;
+    });
+</script>
+
 
 <h1>Community Events</h1>
 

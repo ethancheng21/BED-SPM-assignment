@@ -1,0 +1,28 @@
+<!-- header.html -->
+<header class="header-wrapper" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; border-bottom: 1px solid #eee; position: relative;">
+  <div class="header-left" style="flex: 1; display: flex; align-items: center;">
+    <div class="logo">
+      <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
+    </div>
+  </div>
+
+  <div class="header-center" style="position: absolute; left: 50%; transform: translateX(-50%);">
+    <nav class="nav-links" style="display: flex; gap: 2rem; justify-content: center;">
+      <a href="home1.html" style="text-decoration: none; color: #333; font-weight: 500; font-size: 1.1rem; padding: 0.5rem 1rem; border-radius: 10px; transition: background 0.3s, color 0.3s;">Home</a>
+      <a href="#faq" style="text-decoration: none; color: #333; font-weight: 500; font-size: 1.1rem; padding: 0.5rem 1rem; border-radius: 10px; transition: background 0.3s, color 0.3s;">FAQ</a>
+      <a href="help-feedback.html" style="text-decoration: none; color: #333; font-weight: 500; font-size: 1.1rem; padding: 0.5rem 1rem; border-radius: 10px; transition: background 0.3s, color 0.3s;">Help</a>
+    </nav>
+  </div>
+
+  <div class="header-right header-buttons" style="display: flex; gap: 0.75rem; align-items: center;">
+    <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode" style="background-color: orange; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;">
+      <span id="darkIcon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/>
+        </svg>
+      </span>
+    </button>
+    <button class="action-btn" onclick="goToProfile()" style="background-color: orange; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;">View Profile</button>
+    <button class="action-btn" onclick="logout()" style="background-color: orange; color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;">Logout</button>
+  </div>
+</header>
