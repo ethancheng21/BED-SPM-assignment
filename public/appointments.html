@@ -185,7 +185,7 @@
     const form = document.getElementById("apptForm");
 
     async function fetchAppointments() {
-      const res = await fetch(`/api/appointments/user/${userId}/upcoming`);
+      const res = await fetch(`/api/appointments/user/${userId}/all`);
       const data = await res.json();
 
       return data.map(appt => ({
@@ -214,31 +214,39 @@
 
         const rawDate = document.getElementById("appointment_date").value;
         const dateObj = new Date(rawDate);
+
+        const now = new Date();
+        if (dateObj <= now) {
+            alert("❌ Appointment date must be in the future.");
+            return;
+        }
+
         const appointmentDate = dateObj.toISOString().slice(0, 19).replace("T", " ");
 
         const body = {
-          user_id: userId,
-          doctor_name: document.getElementById("doctor_name").value,
-          location: document.getElementById("location").value,
-          appointment_date: appointmentDate,
-          notes: document.getElementById("notes").value,
+            user_id: userId,
+            doctor_name: document.getElementById("doctor_name").value,
+            location: document.getElementById("location").value,
+            appointment_date: appointmentDate,
+            notes: document.getElementById("notes").value,
         };
 
         const res = await fetch("/api/appointments", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
         });
 
         if (res.ok) {
-          alert("Appointment added!");
-          form.reset();
-          calendar.removeAllEvents();
-          calendar.addEventSource(await fetchAppointments());
+            alert("Appointment added!");
+            form.reset();
+            calendar.removeAllEvents();
+            calendar.addEventSource(await fetchAppointments());
         } else {
-          alert("Failed to add appointment.");
+            alert("Failed to add appointment.");
         }
-      });
+        });
+
     });
   </script>
 </body>
