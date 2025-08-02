@@ -335,13 +335,16 @@
   fetchMessages();
   setInterval(fetchMessages, 5000);
 
-  // Wait until header is loaded
   fetch('header.html')
     .then(response => response.text())
     .then(data => {
       document.getElementById('header-placeholder').innerHTML = data;
     });
+
+  // **ADD THIS LINE**
+  applySavedTheme();
 };
+
 
   </script>
 
