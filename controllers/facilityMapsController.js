@@ -1,7 +1,23 @@
 const fetch = require("node-fetch");
 require("dotenv").config();
 
-// Controller: Get all facilities (from OneMap Theme API)
+// Cleaned up list of supported OneMap themes (removed dfc_gtp)
+const THEMES = [
+  "moh_hospitals",
+  "registered_pharmacy",
+  "chas_clinics",
+  "polyclinics",
+  "nursing_homes",
+  "eldercare_centres",
+  "quitcentres",
+  "blood_bank",
+  "cervicalscreen",
+  "breastscreen",
+  "eldercare",
+  "vaccination_polyclinics"
+];
+
+// Controller: Get all facilities from OneMap Theme API
 exports.getFacilitiesFromOneMap = async (req, res) => {
   const { lat, lng } = req.query;
 
@@ -10,6 +26,7 @@ exports.getFacilitiesFromOneMap = async (req, res) => {
   }
 
   try {
+    // Authenticate with OneMap
     const tokenRes = await fetch("https://www.onemap.gov.sg/api/auth/post/getToken", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -27,34 +44,52 @@ exports.getFacilitiesFromOneMap = async (req, res) => {
     }
 
     const extents = "1.2000,103.6000,1.4800,104.0500";
-    const url = `https://www.onemap.gov.sg/api/public/themesvc/retrieveTheme?queryName=moh_hospitals&extents=${extents}`;
+    const allFacilities = [];
 
-    const response = await fetch(url, {
-      headers: { Authorization: token },
+    // Concurrently fetch all themes using Promise.all
+    const fetchPromises = THEMES.map(async (theme) => {
+      const url = `https://www.onemap.gov.sg/api/public/themesvc/retrieveTheme?queryName=${theme}&extents=${extents}`;
+
+      try {
+        const response = await fetch(url, {
+          headers: { Authorization: token },
+        });
+
+        const data = await response.json();
+        if (!data?.SrchResults) return [];
+
+        return data.SrchResults.map((facility) => {
+          const coords = facility.LatLng?.split(",");
+          if (!coords || coords.length !== 2) return null;
+
+          const lat = parseFloat(coords[0]);
+          const lng = parseFloat(coords[1]);
+          if (isNaN(lat) || isNaN(lng)) return null;
+
+          return {
+            name: facility.NAME || "Unnamed",
+            description: facility.DESCRIPTION || "",
+            lat,
+            lng,
+            address: facility.ADDRESS || "",
+            category: theme,
+            source: "onemap",
+          };
+        }).filter(Boolean);
+      } catch (e) {
+        console.error(`❌ Error fetching theme ${theme}:`, e.message);
+        return [];
+      }
     });
 
-    const data = await response.json();
+    const facilitiesByTheme = await Promise.all(fetchPromises);
+    facilitiesByTheme.forEach((themeFacilities) => allFacilities.push(...themeFacilities));
 
-    if (!data?.SrchResults) {
+    if (allFacilities.length === 0) {
       return res.status(404).json({ message: "No facilities found." });
     }
 
-    const facilities = data.SrchResults.map((facility) => {
-      const coords = facility.LatLng?.split(",");
-      if (!coords || coords.length !== 2) return null;
-
-      return {
-        name: facility.NAME || "Unnamed",
-        description: facility.DESCRIPTION || "",
-        lat: parseFloat(coords[0]),
-        lng: parseFloat(coords[1]),
-        address: facility.ADDRESS || "",
-        category: facility.queryName || "moh_hospitals",
-        source: "onemap",
-      };
-    }).filter(Boolean);
-
-    res.status(200).json({ count: facilities.length, results: facilities });
+    res.status(200).json({ count: allFacilities.length, results: allFacilities });
   } catch (err) {
     console.error("❌ Error fetching facilities:", err.message);
     res.status(500).json({ message: "Failed to fetch facilities" });
@@ -86,12 +121,8 @@ exports.getPublicTransportRoute = async (req, res) => {
       return res.status(500).json({ message: "Failed to authenticate with OneMap" });
     }
 
-    // Use current date and time
     const now = new Date();
-    const date = now.toLocaleDateString("en-US", {
-      year: "numeric", month: "2-digit", day: "2-digit"
-    }).replace(/\//g, "-");
-
+    const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
     const time = now.toTimeString().split(" ")[0]; // HH:MM:SS
 
     const routeUrl = `https://www.onemap.gov.sg/api/public/routingsvc/route?start=${startLat},${startLng}&end=${endLat},${endLng}&routeType=pt&date=${date}&time=${time}&mode=TRANSIT&maxWalkDistance=1000&numItineraries=1`;
