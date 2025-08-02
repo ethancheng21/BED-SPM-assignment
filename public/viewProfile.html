@@ -15,14 +15,16 @@
     }
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      background-color: #fff;
-      border-bottom: 1px solid #eee;
-      transition: background-color 0.3s; /* Smooth transition */
-    }
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #fff;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.3s;
+}
+
 
     .logo {
       font-size: 1.8rem;
@@ -30,18 +32,41 @@
       color: #005b96;
     }
 
-    .nav-links {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-    }
+    /* Center the nav-links in the header */
+.nav-links {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1.5rem;
+}
 
-    .nav-links a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-    }
+/* Style nav links with underline hover */
+.nav-links a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+/* Underline animation */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  background-color: orange;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
 
     .action-buttons {
       display: flex;

@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Medications</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background: #fff;
@@ -14,28 +20,47 @@
     }
 
     header {
+      
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
       border-bottom: 1px solid #eee;
+      background-color: inherit;
     }
 
     .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #005b96;
+      height: 50px;
     }
 
-    nav {
+    .nav-links {
       display: flex;
-      gap: 1.5rem;
+      gap: 2rem;
+      justify-content: center;
+      flex: 1;
     }
 
-    nav a {
+    .nav-links a {
       text-decoration: none;
       color: #333;
       font-weight: 500;
+      position: relative;
+      padding-bottom: 4px;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: orange;
+      transition: width 0.3s ease-in-out;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
     }
 
     .header-buttons {
@@ -117,12 +142,13 @@
       color: #e0e0e0;
     }
 
-    body.dark-mode nav a,
+    body.dark-mode .nav-links a,
     body.dark-mode .logo {
       color: white;
     }
 
-    body.dark-mode h1, body.dark-mode h2 {
+    body.dark-mode h1,
+    body.dark-mode h2 {
       color: orange;
     }
 
@@ -137,30 +163,39 @@
       background-color: #1e1e1e;
       color: white;
     }
+
+    body.dark-mode .nav-links a::after {
+      background-color: orange;
+    }
   </style>
 </head>
 <body>
-    <header>
-      <div class="logo">Lions<span style="color:#005b96;">Befrienders</span></div>
-      <nav class="nav-links">
-        <a href="home1.html">Home</a>
-        <a href="#faq">FAQ</a>
-        <a href="help-feedback.html">Help</a>
-      </nav>
-      <div class="header-buttons">
-        <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
-          <span id="darkIcon"></span>
-        </button>
-        <a class="action-btn" href="#" onclick="logout()">Logout</a>
-      </div>
-  </header>
+  <header>
+  <img class="logo" src="background/LB logo.png" alt="Lions Befrienders Logo" />
+  
+  <div class="nav-container">
+    <nav class="nav-links">
+      <a href="home1.html">Home</a>
+      <a href="#faq">FAQ</a>
+      <a href="help-feedback.html">Help</a>
+    </nav>
+  </div>
+
+  <div class="header-buttons">
+    <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
+      <span id="darkIcon"></span>
+    </button>
+    <a class="action-btn" href="#" onclick="logout()">Logout</a>
+  </div>
+</header>
+
 
   <h1>Daily Medications</h1>
 
   <form id="medForm">
-    <input type="text" id="name" placeholder="Medication Name" required>
-    <input type="text" id="dosage" placeholder="Dosage" required>
-    <input type="time" id="schedule_time" required>
+    <input type="text" id="name" placeholder="Medication Name" required />
+    <input type="text" id="dosage" placeholder="Dosage" required />
+    <input type="time" id="schedule_time" required />
     <textarea id="instructions" placeholder="Instructions (optional)"></textarea>
     <button type="submit">Add Medication</button>
   </form>

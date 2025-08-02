@@ -7,40 +7,57 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #fff;
+  color: #111;
+  transition: background 0.3s, color 0.3s;
+}
 
-    header {
-      padding: 1rem 2rem;
-      background-color: #fff;
-      border-bottom: 1px solid #ddd;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 10;
-    }
 
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #005b96;
-    }
 
-    nav {
-      display: flex;
-      gap: 1.5rem;
-    }
+header {
+  padding: 1rem 2rem;
+  background-color: inherit;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
 
-    nav a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-    }
+nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+nav a::after {
+  content: "";
+  position: absolute;
+  width: 0%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: orange;
+  transition: width 0.3s ease-in-out;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
 
     .main-container {
       display: flex;
@@ -138,7 +155,7 @@
 </head>
 <body>
   <header>
-    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
     <nav>
       <a href="home.html">Home</a>
     </nav>
@@ -262,5 +279,15 @@
       alert("Postal code is required.");
     }
   </script>
+  <script>
+  // Dark mode: check if saved, apply on load
+  window.addEventListener("DOMContentLoaded", () => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark-mode");
+    }
+  });
+</script>
+
 </body>
 </html>

@@ -129,12 +129,36 @@
     .leaflet-popup-close-button {
       display: none;
     }
+    nav a {
+  position: relative;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background-color: orange;
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
   </style>
 </head>
 <body>
   <!-- Simplified Navbar -->
   <header>
-    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
     <nav>
       <a href="home.html">Home</a> <!-- Link to Home page -->
     </nav>

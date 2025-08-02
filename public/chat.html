@@ -11,6 +11,8 @@
       height: 100%;
       font-family: Arial, sans-serif;
       background: #f0f2f5;
+      color: #111;
+      transition: background 0.3s, color 0.3s;
     }
 
     .chat-wrapper {
@@ -147,6 +149,71 @@
       background-color: orange;
       color: white;
     }
+
+    /* DARK MODE */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .chat-wrapper {
+      background-color: #1e1e1e;
+    }
+
+    body.dark-mode .friend-button {
+      background-color: #333;
+      color: white;
+    }
+
+    body.dark-mode .friend-button:hover {
+      background-color: orange;
+      color: white;
+    }
+
+    body.dark-mode .friend-button.active {
+      background-color: orange;
+      color: white;
+    }
+
+    body.dark-mode .chat-header {
+      background-color: #002855;
+    }
+
+    body.dark-mode #chatBox {
+      background-color: #2a2a2a;
+    }
+
+    body.dark-mode .you {
+      background-color: #ffb74d;
+      color: black;
+    }
+
+    body.dark-mode .friend {
+      background-color: #444;
+      color: white;
+    }
+
+    body.dark-mode .chat-input {
+      background-color: #2a2a2a;
+      border-top-color: #444;
+    }
+
+    body.dark-mode .chat-input input {
+      background-color: #1e1e1e;
+      color: white;
+      border-color: #555;
+    }
+
+    body.dark-mode .back-button {
+      background-color: #1e1e1e;
+      color: orange;
+      border-color: orange;
+    }
+
+    body.dark-mode .back-button:hover {
+      background-color: orange;
+      color: white;
+    }
   </style>
 </head>
 <body>
@@ -172,6 +239,12 @@
     const chatWith = document.getElementById("chatWith");
     let friendId = null;
     let currentButtons = [];
+
+    // Apply dark mode if previously selected
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+      document.body.classList.add("dark-mode");
+    }
 
     async function loadFriends() {
       const res = await fetch(`/api/friends/${userId}`);
