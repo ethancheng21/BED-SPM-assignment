@@ -125,4 +125,3 @@ nunit-*.xml
 # Node.js
 node_modules/
 .env
-app.js

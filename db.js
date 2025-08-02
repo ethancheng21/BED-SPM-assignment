@@ -1,14 +1,10 @@
 const sql = require("mssql");
+const dotenv = require("dotenv");
 
-// Debug: Show loaded env variables (optional - remove for production)
-console.log("Loaded DB config:", {
-  user: process.env.DB_USER,
-  server: process.env.DB_SERVER,
-  database: process.env.DB_DATABASE,
-  port: process.env.DB_PORT
-});
+// Load environment variables
+dotenv.config();
 
-// SQL Server config
+// SQL Server configuration
 const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -17,33 +13,40 @@ const config = {
   port: parseInt(process.env.DB_PORT),
   options: {
     encrypt: false, // Use true if you're using Azure
-    trustServerCertificate: true,
+    trustServerCertificate: true, // Disable for production
   },
 };
 
+// Create a connection pool
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
-    console.log('Connected to MSSQL');
+    console.log("Connected to MSSQL");
     return pool;
   })
-  .catch(err => console.error('DB connection failed:', err));
+  .catch(err => console.error("DB connection failed:", err));
 
-  // for medication.js
+
+// Define query function
 async function query(sqlQuery, params = {}) {
   const pool = await poolPromise;
   const request = pool.request();
 
+  // Bind parameters to the query
   for (const key in params) {
     request.input(key, params[key]);
   }
 
-  return request.query(sqlQuery);
+  // Execute the query
+  const result = await request.query(sqlQuery);
+  return result;
 }
 
-module.exports = { 
+// Export query and poolPromise
+module.exports = {
   sql,
   poolPromise,
-  query,
+  query, // Make sure query is exported
   request: async () => (await poolPromise).request(),
 };
+

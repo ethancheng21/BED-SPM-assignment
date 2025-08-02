@@ -3,35 +3,226 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="groupChat.css" />
+
   <title>Group Chat</title>
-    
+
+    <style>
+    /* Reset and base */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth;
+    }
+    html, body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #111;
+      line-height: 1.6;
+      overflow-x: hidden;
+      width: 100%; max-width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #eee;
+      min-height: 80px;
+      width: 100%;
+    }
+    header * {
+      line-height: 1;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+    .nav-links {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      font-size: 1.1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-links a:hover {
+      background-color: #f4f4f4;
+      color: #005b96;
+    }
+    .header-buttons {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .action-btn {
+      background-color: orange;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s, color 0.3s;
+    }
+    .action-btn:hover {
+      background-color: #cc8400;
+    }
+
+    /* Dark mode */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    body.dark-mode header {
+      background-color: #1e1e1e;
+      border-bottom-color: #444;
+    }
+    body.dark-mode .nav-links a {
+      color: white;
+    }
+    body.dark-mode .nav-links a:hover {
+      background-color: transparent;
+      color: orange;
+    }
+    body.dark-mode .action-btn {
+      background-color: orange;
+      color: white;
+    }
+
+    /* Page title */
+    h2#chat-title {
+      margin: 2rem 0 1rem;
+      color: #002855;
+    }
+    body.dark-mode h2#chat-title {
+      color: orange;
+    }
+
+    /* User label */
+    #user-label {
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    /* Chat container */
+    #chat-box {
+      width: 100%;
+      max-width: 800px;
+      height: 400px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 1rem;
+      margin: 0 auto 1rem;
+    }
+    body.dark-mode #chat-box {
+      background-color: #1e1e1e;
+      border-color: #444;
+    }
+
+    .message {
+      background-color: #e0e0e0;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      word-wrap: break-word;
+    }
+    body.dark-mode .message {
+      background-color: #2c2c2c;
+      color: #eee;
+    }
+
+    .sender {
+      font-weight: bold;
+    }
+
+    .timestamp {
+      font-size: 0.8rem;
+      color: #888;
+      margin-left: 10px;
+    }
+    body.dark-mode .timestamp {
+      color: #bbb;
+    }
+
+    /* Chat input form */
+    #chat-input {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto 2rem;
+    }
+
+    #message {
+      width: 80%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+    }
+    body.dark-mode #message {
+      background-color: #2c2c2c;
+      color: white;
+      border: 1px solid #555;
+    }
+
+    #send-btn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 1rem;
+    }
+    #send-btn:hover {
+      background-color: #45a049;
+    }
+    body.dark-mode #send-btn {
+      background-color: #388e3c;
+    }
+  </style>
 </head>
 
 <body>
 
-      <!-- Navbar -->
-  <nav class="nav-bar">
-    <div class="nav-container">
-      <div class="nav-logo">LOGO</div>
-      <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Events</a></li>
-        <li><a href="#">Hobbies</a></li>
-        <li><a href="#">Chat</a></li>
-        <li><a href="#">FAQ</a></li>
-      </ul>
-      <button class="nav-login">Login</button>
-    </div>
-  </nav>
+  <!-- Header and Nav Bar -->
+<div id="header-placeholder"></div>
+
+<script>
+  fetch('header.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('header-placeholder').innerHTML = data;
+    });
+</script>
+
 
 
   <h2 id="chat-title">Loading...</h2>
-
-
   <p id="user-label"></p>
-
-
   <div id="chat-box"></div>
 
   <form id="chat-input">
@@ -40,81 +231,113 @@
   </form>
 
   <script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const hobbyId = urlParams.get("hobbyId");
+    const urlParams = new URLSearchParams(window.location.search);
+    const hobbyId = urlParams.get("hobbyId");
 
-  const userId = localStorage.getItem("userId");
-  const userName = localStorage.getItem("userName");
+    const userId = localStorage.getItem("userId");
+    const userName = localStorage.getItem("userName");
 
-  if (!userId) {
-    alert("Please log in first.");
-    window.location.href = "home.html";
-  } else {
-    document.getElementById("user-label").textContent = `Logged in as: ${userName}`;
-  }
-
-  async function loadHobbyName() {
-    try {
-      const res = await fetch(`/api/hobbies/${hobbyId}`);
-      const hobby = await res.json();
-      document.getElementById("chat-title").textContent = hobby.name;
-    } catch (err) {
-      document.getElementById("chat-title").textContent = "Group Chat";
-      console.error("Failed to load hobby name:", err);
-    }
-  }
-
-  const chatBox = document.getElementById("chat-box");
-  const form = document.getElementById("chat-input");
-
-  async function fetchMessages() {
-    const res = await fetch(`/api/groupchat/${hobbyId}`);
-    const messages = await res.json();
-
-    chatBox.innerHTML = "";
-
-    messages.reverse().forEach(msg => {
-      const div = document.createElement("div");
-      div.className = "message";
-      div.innerHTML = `
-        <span class="sender">${msg.sender_name}</span>
-        <span class="timestamp">(${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>
-        <div>${msg.content}</div>
-      `;
-      chatBox.appendChild(div);
-    });
-
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const content = document.getElementById("message").value;
-
-    const res = await fetch(`/api/groupchat/${hobbyId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "userId": userId
-      },
-      body: JSON.stringify({ content })
-    });
-
-    if (res.ok) {
-      document.getElementById("message").value = "";
-      await fetchMessages();
+    // Check if user is logged in
+    if (!userId || !userName) {
+      document.getElementById("user-label").textContent = "";
     } else {
-      const data = await res.json();
-      alert(data.message || "Error sending message");
+      document.getElementById("user-label").textContent = `Logged in as: ${userName}`;
     }
-  });
 
-  window.onload = () => {
-    loadHobbyName();
-    fetchMessages();
-    setInterval(fetchMessages, 5000);
-  };
-</script>
+    // Dark mode toggle
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      updateDarkIcon(isDark);
+    }
+
+    function updateDarkIcon(isDark) {
+      const icon = isDark
+        ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="#333" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/></svg>`
+        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/></svg>`;
+      document.getElementById("darkIcon").innerHTML = icon;
+    }
+
+    function applySavedTheme() {
+      const saved = localStorage.getItem("theme");
+      const isDark = saved === "dark";
+      if (isDark) document.body.classList.add("dark-mode");
+      updateDarkIcon(isDark);
+    }
+
+    function logout() {
+      localStorage.removeItem("userId");
+      localStorage.removeItem("userName");
+      window.location.href = "auth.html";
+    }
+
+    function goToProfile() {
+      window.location.href = "viewProfile.html";
+    }
+
+    async function loadHobbyName() {
+      try {
+        const res = await fetch(`/api/hobbies/${hobbyId}`);
+        const hobby = await res.json();
+        document.getElementById("chat-title").textContent = hobby.name;
+      } catch (err) {
+        document.getElementById("chat-title").textContent = "Group Chat";
+        console.error("Failed to load hobby name:", err);
+      }
+    }
+
+    const chatBox = document.getElementById("chat-box");
+    const form = document.getElementById("chat-input");
+
+    async function fetchMessages() {
+      const res = await fetch(`/api/groupchat/${hobbyId}`);
+      const messages = await res.json();
+
+      chatBox.innerHTML = "";
+
+      messages.reverse().forEach(msg => {
+        const div = document.createElement("div");
+        div.className = "message";
+        div.innerHTML = `
+          <span class="sender">${msg.sender_name}</span>
+          <span class="timestamp">(${new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})</span>
+          <div>${msg.content}</div>
+        `;
+        chatBox.appendChild(div);
+      });
+
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const content = document.getElementById("message").value;
+
+      const res = await fetch(`/api/groupchat/${hobbyId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "userId": userId
+        },
+        body: JSON.stringify({ content })
+      });
+
+      if (res.ok) {
+        document.getElementById("message").value = "";
+        await fetchMessages();
+      } else {
+        const data = await res.json();
+        alert(data.message || "Error sending message");
+      }
+    });
+
+    window.onload = () => {
+      applySavedTheme();
+      loadHobbyName();
+      fetchMessages();
+      setInterval(fetchMessages, 5000);
+    };
+  </script>
 
 </body>
 </html>

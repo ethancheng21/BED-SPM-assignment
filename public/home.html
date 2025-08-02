@@ -16,6 +16,7 @@
       font-family: Arial, sans-serif;
       background: #fff;
       color: #111;
+      transition: background 0.3s, color 0.3s;
     }
 
     header {
@@ -43,7 +44,13 @@
       font-weight: 500;
     }
 
-    .login-btn {
+    .header-buttons {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .action-btn {
       background-color: orange;
       color: white;
       border: none;
@@ -51,7 +58,10 @@
       border-radius: 20px;
       cursor: pointer;
       font-weight: bold;
-      text-decoration: none;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .banner {
@@ -74,6 +84,7 @@
     .services h2 {
       font-size: 2rem;
       margin-bottom: 1rem;
+      color: #002855;
     }
 
     .service-grid {
@@ -95,14 +106,6 @@
 
     .service-item:hover {
       background: #e0e0e0;
-    }
-
-    .more-link {
-      margin-top: 1rem;
-      display: block;
-      text-align: right;
-      color: orange;
-      font-weight: bold;
     }
 
     .programmes {
@@ -211,22 +214,93 @@
       text-decoration: underline;
       cursor: pointer;
     }
+
+    /* Dark mode styles */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode nav a {
+      color: #ffffff;
+    }
+
+    body.dark-mode .service-item,
+    body.dark-mode .programme-card,
+    body.dark-mode .faq-item {
+      background-color: #1e1e1e;
+      color: #eee;
+    }
+
+    body.dark-mode .faq-answer {
+      color: #ccc;
+    }
+
+    body.dark-mode .faq-section {
+      background-color: #1a1a1a;
+    }
+
+    body.dark-mode h2,
+    body.dark-mode .faq-question,
+    body.dark-mode .programme-card h3 {
+      color: orange;
+    }
+
+    /* Font size settings modal */
+    #fontSizeModal {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+
+    #fontSizeModal select {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+    }
+
+    /* Floating font size button */
+    #fontSizeButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: orange;
+      color: white;
+      border: none;
+      padding: 0.7rem 1rem;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      z-index: 999;
+    }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="logo">Lions<span style="color:orange;">Defenders</span></div>
+    <div class="logo">
+    <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
+    </div>
     <nav>
-      <a href="#">Healthier SG</a>
-      <a href="#">Health A-Z</a>
-      <a href="#">Live Healthy</a>
-      <a href="#">Mental Well-Being</a>
-      <a href="#">Parent Hub</a>
-      <a href="#">Health Programmes</a>
-      <a href="#">Health Services</a>
+      <a href="#">Home</a>
+      <a href="#faq">FAQ</a>  <!-- Link to FAQ section -->
+      <a href="help-feedback.html">Help</a>  <!-- Link to Help and Feedback -->
     </nav>
-    <a class="login-btn" href="auth.html">Login</a>
+    <div class="header-buttons">
+      <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
+        <span id="darkIcon">
+          <!-- default icon will be updated by JS -->
+        </span>
+      </button>
+      <a class="action-btn" href="auth.html">Login</a>
+    </div>
   </header>
 
   <div class="banner">
@@ -236,63 +310,146 @@
   <div class="services">
     <h2>Health Services</h2>
     <div class="service-grid">
-      <div class="service-item">Healthier SG</div>
-      <div class="service-item">Lab Results</div>
+      <div class="service-item" onclick="alert('Please log in to access Hobbies.')">Hobbies</div>
+
+        <div class="service-item" onclick="alert('Please log in to access Events.')">Events</div>
+
       <div class="service-item">Appointments</div>
-      <div class="service-item">Payments</div>
+      <div class="service-item" onclick="alert('Please log in to access Chat with Friends.')">Chat with Friends</div>
+
       <div class="service-item">Immunisation</div>
     </div>
     <a class="more-link scroll-to-faq" href="#faq">→ View FAQs</a>
   </div>
 
-  <!-- Health Programmes Section -->
   <section class="programmes">
-  <h2>Quick Navigation</h2>
-  <div class="programme-grid">
-    <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
-      <h3>Nearby Facilities →</h3>
-      <p>Find clinics, polyclinics, and libraries near you on the map.</p>
-    </a>
-    <div class="programme-card mental">
-      <h3>[Placeholder]</h3>
-      <p>You can update this card later with your own link and description.</p>
+    <h2>Quick Navigation</h2>
+    <div class="programme-grid">
+      <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
+        <h3>Nearby Facilities →</h3>
+        <p>Find clinics, polyclinics, and libraries near you on the map.</p>
+      </a>
+      <div class="programme-card mental">
+        <h3>[Placeholder]</h3>
+        <p>You can update this card later with your own link and description.</p>
+      </div>
+      <div class="programme-card screening">
+        <h3>[Placeholder]</h3>
+        <p>You can update this card later with your own link and description.</p>
+      </div>
     </div>
-    <div class="programme-card screening">
-      <h3>[Placeholder]</h3>
-      <p>You can update this card later with your own link and description.</p>
-    </div>
-  </div>
-</section>
-
+  </section>
 
   <div class="faq-section" id="faq">
     <h2>Frequently Asked Questions</h2>
-    <div class="faq-container">
-      <div class="faq-item">
-        <div class="faq-question">What is Healthier SG?</div>
-        <div class="faq-answer">Healthier SG is a national preventive care strategy to support better long-term health for Singaporeans.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">How do I book an appointment?</div>
-        <div class="faq-answer">You can book appointments online via the SeniorsApp under the "Appointments" section or through your healthcare provider.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">Is my personal data secure?</div>
-        <div class="faq-answer">Yes, all data is protected and stored securely according to national healthcare data guidelines.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-question">Where can I find mental wellness resources?</div>
-        <div class="faq-answer">Visit the "Mental Well-Being" section in the navigation bar for curated resources and support services.</div>
-      </div>
+    <div class="faq-container" id="faqContainer">
+      <!-- FAQ content will be loaded here from backend -->
     </div>
   </div>
 
+  <!-- Font Size Settings Modal -->
+  <div id="fontSizeModal">
+    <h3>Select Font Size</h3>
+    <select id="fontSizeSelect">
+      <option value="small">Small</option>
+      <option value="medium">Medium</option>
+      <option value="large">Large</option>
+    </select>
+    <div style="margin-top: 1rem; text-align: right;">
+      <button onclick="applyFontSize()" style="margin-right: 10px;">Apply</button>
+      <button onclick="closeFontSizeModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- Floating Font Size Button -->
+  <button id="fontSizeButton" onclick="openFontSizeModal()">A</button>
+
   <script>
-    document.querySelectorAll(".faq-item").forEach(item => {
-      item.addEventListener("click", () => {
-        item.classList.toggle("open");
-      });
-    });
+    // Toggle Dark Mode
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+      updateDarkIcon(isDark);
+    }
+
+    // Update Dark Mode Icon
+    function updateDarkIcon(isDark) {
+      const icon = isDark
+        ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="#333" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/></svg>`
+        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/></svg>`;
+      document.getElementById("darkIcon").innerHTML = icon;
+    }
+
+    // Apply Saved Theme
+    function applySavedTheme() {
+      const saved = localStorage.getItem("theme");
+      const isDark = saved === "dark";
+      if (isDark) document.body.classList.add("dark-mode");
+      updateDarkIcon(isDark);
+    }
+
+    // Font Size Modal
+    function openFontSizeModal() {
+      document.getElementById("fontSizeModal").style.display = "block";
+    }
+
+    function closeFontSizeModal() {
+      document.getElementById("fontSizeModal").style.display = "none";
+    }
+
+    function applyFontSize() {
+      const selected = document.getElementById("fontSizeSelect").value;
+      localStorage.setItem("fontSize", selected);
+      setFontSize(selected);
+    }
+
+    function setFontSize(size) {
+      let scale;
+      switch (size) {
+        case "small": scale = "100%"; break;
+        case "medium": scale = "115%"; break;
+        case "large": scale = "130%"; break;
+        default: scale = "100%";
+      }
+      document.body.style.fontSize = scale;
+    }
+
+    // Load font size on startup
+    const savedSize = localStorage.getItem("fontSize") || "medium";
+    setFontSize(savedSize);
+    document.getElementById("fontSizeSelect").value = savedSize;
+
+    // Load FAQ content from backend
+    async function loadFaqs() {
+      try {
+        const res = await fetch("http://localhost:3000/api/faqs");
+        const faqs = await res.json();
+        const container = document.getElementById("faqContainer");
+        container.innerHTML = "";
+
+        faqs.forEach(faq => {
+          const item = document.createElement("div");
+          item.className = "faq-item";
+          item.innerHTML = `
+            <div class="faq-question">${faq.question}</div>
+            <div class="faq-answer">${faq.answer}</div>
+          `;
+          container.appendChild(item);
+        });
+
+        document.querySelectorAll(".faq-item").forEach(item => {
+          item.addEventListener("click", () => {
+            item.classList.toggle("open");
+          });
+        });
+      } catch (err) {
+        console.error("Failed to load FAQs:", err);
+      }
+    }
+
+    // Apply theme and load FAQs and profile
+    applySavedTheme();
+    loadFaqs();
   </script>
 
 </body>
