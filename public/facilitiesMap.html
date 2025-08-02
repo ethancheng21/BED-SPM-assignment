@@ -6,6 +6,9 @@
   <title>All Facilities Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
+    * {
+      box-sizing: border-box;
+    }
     html, body {
       margin: 0;
       padding: 0;
@@ -13,32 +16,28 @@
       font-family: 'Segoe UI', Arial, sans-serif;
       overflow: hidden;
     }
-
     header {
       padding: 1rem 2rem;
       background-color: #fff;
       border-bottom: 1px solid #ddd;
       display: flex;
-      justify-content: space-between;
       align-items: center;
     }
-
     .logo {
       font-size: 1.8rem;
       font-weight: bold;
-      color: #005b96;
     }
-
+    .logo span {
+      color: orange;
+    }
     .main-container {
       display: flex;
-      height: calc(100% - 72px); /* subtract header height */
+      height: calc(100% - 72px);
     }
-
     #map {
       flex: 1;
       height: 100%;
     }
-
     #sidebar {
       width: 30vw;
       max-width: 500px;
@@ -46,98 +45,73 @@
       background-color: #f4f6f8;
       padding: 1rem;
       overflow-y: auto;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
     }
-
     h2 {
-      margin-top: 0.5rem;
       font-size: 1.4rem;
-      color: #333;
     }
-
-    ul {
-      padding-left: 0;
-      list-style: none;
+    .facility-label, .transport-status, .legend-box {
+      margin-top: 1rem;
     }
-
-    li {
+    .facility-label, .transport-box, .legend-box {
       background: #fff;
       border-radius: 10px;
-      margin-bottom: 0.75rem;
       padding: 0.75rem;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-      font-size: 0.95rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
     }
-
     input, button {
-      display: block;
       width: 100%;
       padding: 0.6rem 1rem;
       font-size: 1rem;
       border-radius: 8px;
-      border: 1px solid #ccc;
-      margin: 0.5rem 0 0.75rem;
+      margin-top: 0.5rem;
       box-sizing: border-box;
     }
-
     button {
-      color: white;
       background-color: #0077cc;
+      color: white;
       font-weight: bold;
       border: none;
-      transition: background 0.3s, transform 0.2s;
       cursor: pointer;
     }
-
     button:hover:not(:disabled) {
       background-color: #005fa3;
-      transform: scale(1.02);
     }
-
     button:disabled {
       background-color: #ccc;
       cursor: not-allowed;
     }
-
-    .facility-label {
-      padding: 1rem;
-      background: white;
-      margin: 1rem 0;
-      border-radius: 10px;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
-    }
-
-    .hidden {
-      display: none !important;
-      visibility: hidden;
-      opacity: 0;
-    }
-
     .transport-status {
       display: flex;
-      justify-content: space-between;
       gap: 0.5rem;
-      margin-top: 1rem;
     }
-
     .transport-box {
       flex: 1;
-      background: #fff;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      padding: 0.5rem;
       text-align: center;
       font-size: 1rem;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      border: 2px solid #ccc;
+    }
+    .legend-box ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .legend-box li {
+      margin: 0.4rem 0;
+      cursor: pointer;
+    }
+    .legend-box li:hover {
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      padding: 0.2rem;
+    }
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+    <div class="logo">Lions<span>Befrienders</span></div>
   </header>
 
   <div class="main-container">
@@ -155,6 +129,7 @@
       </div>
 
       <div id="facilityLabel" class="facility-label hidden">Hover over a facility marker to see details.</div>
+      <button id="confirmBtn" class="hidden">✅ Confirm Facility</button>
       <button id="findRouteBtn" class="hidden">🧭 Find Route</button>
 
       <div class="transport-status hidden" id="transportStatusBoxes">
@@ -164,6 +139,20 @@
       </div>
 
       <button id="resetBtn" class="hidden">🔄 Reset Route</button>
+
+      <div class="legend-box">
+        <h2>Legend (Click to Filter)</h2>
+        <ul>
+          <li onclick="showOnlyCategory('moh_hospitals')"><span style="color: red;">●</span> MOH Hospitals</li>
+          <li onclick="showOnlyCategory('registered_pharmacy')"><span style="color: blue;">●</span> Registered Pharmacy</li>
+          <li onclick="showOnlyCategory('quitcentres')"><span style="color: orange;">●</span> Quit Centres</li>
+          <li onclick="showOnlyCategory('blood_bank')"><span style="color: purple;">●</span> Blood Banks</li>
+          <li onclick="showOnlyCategory('cervicalscreen')"><span style="color: teal;">●</span> Cervical Screening</li>
+          <li onclick="showOnlyCategory('breastscreen')"><span style="color: pink;">●</span> Breast Screening</li>
+          <li onclick="showOnlyCategory('eldercare')"><span style="color: black;">●</span> Eldercare Services</li>
+          <li onclick="showOnlyCategory('vaccination_polyclinics')"><span style="color: goldenrod;">●</span> Vaccination Polyclinics</li>
+        </ul>
+      </div>
     </div>
   </div>
 
@@ -172,14 +161,51 @@
     const map = L.map("map").setView([1.3521, 103.8198], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
+    const categoryIcons = {
+      moh_hospitals: "red",
+      registered_pharmacy: "blue",
+      quitcentres: "orange",
+      blood_bank: "purple",
+      cervicalscreen: "teal",
+      breastscreen: "pink",
+      eldercare: "black",
+      vaccination_polyclinics: "gold"
+    };
+
+    const iconUrls = {
+      red: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png",
+      blue: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png",
+      orange: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png",
+      purple: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png",
+      teal: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png",
+      pink: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-pink.png",
+      black: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png",
+      gold: "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-gold.png"
+    };
+
+    const shadowUrl = "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png";
+
+    function createColoredMarker(lat, lng, color) {
+      return L.marker([lat, lng], {
+        icon: new L.Icon({
+          iconUrl: iconUrls[color] || iconUrls.blue,
+          shadowUrl,
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        })
+      });
+    }
+
     const postalCodeInput = document.getElementById("postalCodeInput");
     const loadBtn = document.getElementById("loadBtn");
     const routeInstructionsDiv = document.getElementById("route-instructions");
     const resetBtn = document.getElementById("resetBtn");
     const facilityLabel = document.getElementById("facilityLabel");
     const findRouteBtn = document.getElementById("findRouteBtn");
+    const confirmBtn = document.getElementById("confirmBtn");
     const transportStatusBoxes = document.getElementById("transportStatusBoxes");
-    const instructionsSection = document.getElementById("instructions-section");
     const walkBox = document.getElementById("walkBox");
     const busBox = document.getElementById("busBox");
     const mrtBox = document.getElementById("mrtBox");
@@ -187,12 +213,23 @@
     let userLat = null;
     let userLng = null;
     let selectedFacility = null;
+    let confirmedFacility = null;
     let markers = [];
+
+    const categoryMarkers = {};
+    for (let key in categoryIcons) categoryMarkers[key] = [];
+
+    function showOnlyCategory(categoryKey) {
+      markers.forEach(m => map.removeLayer(m));
+      if (categoryMarkers[categoryKey]) {
+        categoryMarkers[categoryKey].forEach(m => m.addTo(map));
+      }
+    }
 
     async function geocodePostalCode(postalCode) {
       const res = await fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${postalCode}&returnGeom=Y&getAddrDetails=Y`);
       const data = await res.json();
-      if (data.results && data.results.length > 0) {
+      if (data.results?.length > 0) {
         return {
           lat: parseFloat(data.results[0].LATITUDE),
           lng: parseFloat(data.results[0].LONGITUDE)
@@ -215,13 +252,13 @@
         const postalCode = postalCodeInput.value.trim();
         if (!postalCode.match(/^\d{6}$/)) return alert("Enter a valid 6-digit postal code.");
 
-        const userCoords = await geocodePostalCode(postalCode);
-        userLat = userCoords.lat;
-        userLng = userCoords.lng;
+        const coords = await geocodePostalCode(postalCode);
+        userLat = coords.lat;
+        userLng = coords.lng;
+
         map.setView([userLat, userLng], 13);
         document.getElementById("postal-section").classList.add("hidden");
         resetBtn.classList.remove("hidden");
-        instructionsSection.classList.add("hidden");
         facilityLabel.classList.remove("hidden");
 
         const res = await fetch(`http://localhost:3000/api/facilityMaps/all?lat=${userLat}&lng=${userLng}`);
@@ -229,18 +266,24 @@
 
         markers.forEach(m => map.removeLayer(m));
         markers = [];
+        for (let key in categoryMarkers) categoryMarkers[key] = [];
 
         data.results.forEach(f => {
-          const marker = L.marker([f.lat || f.latitude, f.lng || f.longitude])
+          const key = f.category?.toLowerCase().replace(/\s/g, "_");
+          if (key === "dfc_gtp") return; // skip dementia category
+          const color = categoryIcons[key] || "blue";
+
+          const marker = createColoredMarker(f.lat || f.latitude, f.lng || f.longitude, color)
             .on("mouseover", () => {
               selectedFacility = f;
-              facilityLabel.innerHTML = `<b>${f.name}</b><br><em>${f.category || "Facility"}</em>`;
-              findRouteBtn.classList.remove("hidden");
+              facilityLabel.innerHTML = `<b>${f.name}</b><br><em>${f.category}</em>`;
+              confirmBtn.classList.remove("hidden");
             })
             .addTo(map);
-          markers.push(marker);
-        });
 
+          markers.push(marker);
+          if (categoryMarkers[key]) categoryMarkers[key].push(marker);
+        });
       } catch (err) {
         console.error(err);
         routeInstructionsDiv.innerHTML = "<p>Error loading facilities.</p>";
@@ -248,13 +291,14 @@
     }
 
     async function getRoute() {
-      if (!selectedFacility) return;
+      if (!confirmedFacility) return;
 
       transportStatusBoxes.classList.add("hidden");
-      map.setView([selectedFacility.lat, selectedFacility.lng], 16);
       findRouteBtn.classList.add("hidden");
+      confirmBtn.classList.add("hidden");
+      map.setView([confirmedFacility.lat, confirmedFacility.lng], 16);
 
-      const url = `http://localhost:3000/api/facilityMaps/transport/route?startLat=${userLat}&startLng=${userLng}&endLat=${selectedFacility.lat}&endLng=${selectedFacility.lng}`;
+      const url = `http://localhost:3000/api/facilityMaps/transport/route?startLat=${userLat}&startLng=${userLng}&endLat=${confirmedFacility.lat}&endLng=${confirmedFacility.lng}`;
       const res = await fetch(url);
       const data = await res.json();
 
@@ -262,14 +306,13 @@
 
       if (data.plan?.itineraries?.length) {
         const legs = data.plan.itineraries[0].legs;
-        routeInstructionsDiv.innerHTML += `<p><strong>Total Duration:</strong> ~${Math.round(legs.reduce((s, l) => s + l.duration, 0) / 60)} minutes</p><ul>`;
+        const duration = Math.round(legs.reduce((s, l) => s + l.duration, 0) / 60);
+        routeInstructionsDiv.innerHTML = `<p><strong>Total Duration:</strong> ~${duration} minutes</p><ul>`;
         legs.forEach(leg => {
           const emoji = leg.mode === "WALK" ? "🚶" : leg.mode === "BUS" ? "🚌" : "🚇";
           routeInstructionsDiv.innerHTML += `<li><strong>${emoji} ${leg.mode}</strong>: ${leg.from.name} → ${leg.to.name} (${(leg.distance / 1000).toFixed(2)} km)</li>`;
         });
         routeInstructionsDiv.innerHTML += "</ul>";
-
-        instructionsSection.classList.remove("hidden");
         updateTransportStatus();
         transportStatusBoxes.classList.remove("hidden");
       } else {
@@ -278,6 +321,12 @@
     }
 
     loadBtn.addEventListener("click", loadFacilities);
+    confirmBtn.addEventListener("click", () => {
+      if (!selectedFacility) return;
+      confirmedFacility = selectedFacility;
+      confirmBtn.classList.add("hidden");
+      findRouteBtn.classList.remove("hidden");
+    });
     findRouteBtn.addEventListener("click", getRoute);
     resetBtn.addEventListener("click", () => location.reload());
   </script>
