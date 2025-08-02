@@ -6,19 +6,16 @@
   <title>All Facilities Map</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
-<<<<<<< HEAD
     nav {
-  display: flex;
-  gap: 1.5rem;
+  margin-left: auto;
 }
 
 nav a {
-  position: relative;
+  color: #111;
   text-decoration: none;
-  color: #111; /* black by default */
   font-weight: 500;
-  padding-bottom: 4px;
-  transition: color 0.2s ease;
+  position: relative;
+  padding-bottom: 2px;
 }
 
 nav a::after {
@@ -26,8 +23,8 @@ nav a::after {
   position: absolute;
   left: 0;
   bottom: 0;
+  width: 0%;
   height: 2px;
-  width: 0;
   background-color: orange;
   transition: width 0.3s ease;
 }
@@ -36,11 +33,9 @@ nav a:hover::after {
   width: 100%;
 }
 
-=======
     * {
       box-sizing: border-box;
     }
->>>>>>> d22b03db7043f6e59638ccc685573549e1fce2a9
     html, body {
       margin: 0;
       padding: 0;
@@ -143,17 +138,12 @@ nav a:hover::after {
 </head>
 <body>
   <header>
-<<<<<<< HEAD
   <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
   <nav>
     <a href="home.html">Home</a>
   </nav>
 </header>
 
-=======
-    <div class="logo">Lions<span>Befrienders</span></div>
-  </header>
->>>>>>> d22b03db7043f6e59638ccc685573549e1fce2a9
 
   <div class="main-container">
     <div id="map"></div>
