@@ -1,8 +1,8 @@
 const Appointment = require("../models/appointmentModel");
 
-exports.getUpcomingAppointments = async (req, res) => {
+exports.getAllAppointments = async (req, res) => {
   try {
-    const result = await Appointment.getUpcomingAppointmentsByUserId(req.params.userId);
+    const result = await Appointment.getAllAppointmentsByUserId(req.params.userId);
     res.json(result.recordset);
   } catch (err) {
     console.error("❌ Error fetching appointments:", err.message);

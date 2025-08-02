@@ -10,12 +10,12 @@ exports.insertAppointment = async ({ user_id, doctor_name, location, appointment
   );
 };
 
-// Get upcoming appointments for a user
-exports.getUpcomingAppointmentsByUserId = async (userId) => {
+// Get ALL appointments for a user (past and future)
+exports.getAllAppointmentsByUserId = async (userId) => {
   return db.query(
     `SELECT * FROM appointments 
-     WHERE user_id = @userId AND appointment_date > GETDATE()
-     ORDER BY appointment_date ASC`,
+     WHERE user_id = @userId
+     ORDER BY appointment_date DESC`,
     { userId }
   );
 };
