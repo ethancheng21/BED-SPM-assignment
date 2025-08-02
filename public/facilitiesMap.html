@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Facilities Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    header {
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #005b96;
+    }
+
+    .main-container {
+      display: flex;
+      height: calc(100% - 72px); /* subtract header height */
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    #sidebar {
+      width: 30vw;
+      max-width: 500px;
+      height: 100%;
+      background-color: #f4f6f8;
+      padding: 1rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+    }
+
+    h2 {
+      margin-top: 0.5rem;
+      font-size: 1.4rem;
+      color: #333;
+    }
+
+    ul {
+      padding-left: 0;
+      list-style: none;
+    }
+
+    li {
+      background: #fff;
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      padding: 0.75rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      font-size: 0.95rem;
+    }
+
+    input, button {
+      display: block;
+      width: 100%;
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin: 0.5rem 0 0.75rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      color: white;
+      background-color: #0077cc;
+      font-weight: bold;
+      border: none;
+      transition: background 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #005fa3;
+      transform: scale(1.02);
+    }
+
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .facility-label {
+      padding: 1rem;
+      background: white;
+      margin: 1rem 0;
+      border-radius: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+
+    .hidden {
+      display: none !important;
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    .transport-status {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .transport-box {
+      flex: 1;
+      background: #fff;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 0.5rem;
+      text-align: center;
+      font-size: 1rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
+  </header>
+
+  <div class="main-container">
+    <div id="map"></div>
+    <div id="sidebar">
+      <div id="instructions-section">
+        <h2>Facility Transport Routes</h2>
+        <div id="route-instructions">Enter your postal code and click Load Facilities.</div>
+      </div>
+
+      <div id="postal-section">
+        <h2>Enter Your Postal Code</h2>
+        <input type="text" id="postalCodeInput" placeholder="e.g. 279875" maxlength="6" />
+        <button id="loadBtn">📍 Load Facilities</button>
+      </div>
+
+      <div id="facilityLabel" class="facility-label hidden">Hover over a facility marker to see details.</div>
+      <button id="findRouteBtn" class="hidden">🧭 Find Route</button>
+
+      <div class="transport-status hidden" id="transportStatusBoxes">
+        <div class="transport-box" id="walkBox">🚶 Walk: ✅</div>
+        <div class="transport-box" id="busBox">🚌 Bus: ✅</div>
+        <div class="transport-box" id="mrtBox">🚇 MRT: ✅</div>
+      </div>
+
+      <button id="resetBtn" class="hidden">🔄 Reset Route</button>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map("map").setView([1.3521, 103.8198], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    const postalCodeInput = document.getElementById("postalCodeInput");
+    const loadBtn = document.getElementById("loadBtn");
+    const routeInstructionsDiv = document.getElementById("route-instructions");
+    const resetBtn = document.getElementById("resetBtn");
+    const facilityLabel = document.getElementById("facilityLabel");
+    const findRouteBtn = document.getElementById("findRouteBtn");
+    const transportStatusBoxes = document.getElementById("transportStatusBoxes");
+    const instructionsSection = document.getElementById("instructions-section");
+    const walkBox = document.getElementById("walkBox");
+    const busBox = document.getElementById("busBox");
+    const mrtBox = document.getElementById("mrtBox");
+
+    let userLat = null;
+    let userLng = null;
+    let selectedFacility = null;
+    let markers = [];
+
+    async function geocodePostalCode(postalCode) {
+      const res = await fetch(`https://www.onemap.gov.sg/api/common/elastic/search?searchVal=${postalCode}&returnGeom=Y&getAddrDetails=Y`);
+      const data = await res.json();
+      if (data.results && data.results.length > 0) {
+        return {
+          lat: parseFloat(data.results[0].LATITUDE),
+          lng: parseFloat(data.results[0].LONGITUDE)
+        };
+      } else {
+        throw new Error("Postal code not found");
+      }
+    }
+
+    function updateTransportStatus() {
+      const hour = new Date().getHours();
+      const isNight = hour >= 0 && hour < 6;
+      walkBox.innerHTML = "🚶 Walk: ✅";
+      busBox.innerHTML = "🚌 Bus: " + (isNight ? "❌" : "✅");
+      mrtBox.innerHTML = "🚇 MRT: " + (isNight ? "❌" : "✅");
+    }
+
+    async function loadFacilities() {
+      try {
+        const postalCode = postalCodeInput.value.trim();
+        if (!postalCode.match(/^\d{6}$/)) return alert("Enter a valid 6-digit postal code.");
+
+        const userCoords = await geocodePostalCode(postalCode);
+        userLat = userCoords.lat;
+        userLng = userCoords.lng;
+        map.setView([userLat, userLng], 13);
+        document.getElementById("postal-section").classList.add("hidden");
+        resetBtn.classList.remove("hidden");
+        instructionsSection.classList.add("hidden");
+        facilityLabel.classList.remove("hidden");
+
+        const res = await fetch(`http://localhost:3000/api/facilityMaps/all?lat=${userLat}&lng=${userLng}`);
+        const data = await res.json();
+
+        markers.forEach(m => map.removeLayer(m));
+        markers = [];
+
+        data.results.forEach(f => {
+          const marker = L.marker([f.lat || f.latitude, f.lng || f.longitude])
+            .on("mouseover", () => {
+              selectedFacility = f;
+              facilityLabel.innerHTML = `<b>${f.name}</b><br><em>${f.category || "Facility"}</em>`;
+              findRouteBtn.classList.remove("hidden");
+            })
+            .addTo(map);
+          markers.push(marker);
+        });
+
+      } catch (err) {
+        console.error(err);
+        routeInstructionsDiv.innerHTML = "<p>Error loading facilities.</p>";
+      }
+    }
+
+    async function getRoute() {
+      if (!selectedFacility) return;
+
+      transportStatusBoxes.classList.add("hidden");
+      map.setView([selectedFacility.lat, selectedFacility.lng], 16);
+      findRouteBtn.classList.add("hidden");
+
+      const url = `http://localhost:3000/api/facilityMaps/transport/route?startLat=${userLat}&startLng=${userLng}&endLat=${selectedFacility.lat}&endLng=${selectedFacility.lng}`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      routeInstructionsDiv.innerHTML = "";
+
+      if (data.plan?.itineraries?.length) {
+        const legs = data.plan.itineraries[0].legs;
+        routeInstructionsDiv.innerHTML += `<p><strong>Total Duration:</strong> ~${Math.round(legs.reduce((s, l) => s + l.duration, 0) / 60)} minutes</p><ul>`;
+        legs.forEach(leg => {
+          const emoji = leg.mode === "WALK" ? "🚶" : leg.mode === "BUS" ? "🚌" : "🚇";
+          routeInstructionsDiv.innerHTML += `<li><strong>${emoji} ${leg.mode}</strong>: ${leg.from.name} → ${leg.to.name} (${(leg.distance / 1000).toFixed(2)} km)</li>`;
+        });
+        routeInstructionsDiv.innerHTML += "</ul>";
+
+        instructionsSection.classList.remove("hidden");
+        updateTransportStatus();
+        transportStatusBoxes.classList.remove("hidden");
+      } else {
+        routeInstructionsDiv.innerHTML = "<p>No route found.</p>";
+      }
+    }
+
+    loadBtn.addEventListener("click", loadFacilities);
+    findRouteBtn.addEventListener("click", getRoute);
+    resetBtn.addEventListener("click", () => location.reload());
+  </script>
+</body>
+</html>

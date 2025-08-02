@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 /**
  * Fetch facilities from OneMap for multiple queryNames
  */
-exports.fetchNearbyThemeFacilities = async (lat, lng, radius = 3000, queryNames = []) => {
+exports.fetchNearbyThemeFacilities = async (lat, lng, radius = 3000, queryNames = [], noRadius = false) => {
   try {
     const tokenRes = await fetch("https://www.onemap.gov.sg/api/auth/post/getToken", {
       method: "POST",
@@ -14,16 +14,29 @@ exports.fetchNearbyThemeFacilities = async (lat, lng, radius = 3000, queryNames 
         password: process.env.ONEMAP_PASSWORD
       })
     });
+
     const tokenData = await tokenRes.json();
     const token = tokenData.access_token;
     if (!token) throw new Error("❌ OneMap token fetch failed");
 
-    const delta = radius / 111320;
-    const extents = `${lat - delta},${lng - delta},${lat + delta},${lng + delta}`;
+    // If 'noRadius' is true, don't apply the radius-based filtering
+    let extents = '';
+    if (!noRadius) {
+      // Calculate bounding box for the given radius
+      const delta = radius / 111320; // Approximation for 1 degree = 111,320 meters
+      extents = `${lat - delta},${lng - delta},${lat + delta},${lng + delta}`;
+    }
+
     const allResults = [];
 
     for (const queryName of queryNames) {
-      const url = `https://www.onemap.gov.sg/api/public/themesvc/retrieveTheme?queryName=${queryName}&extents=${extents}`;
+      let url = `https://www.onemap.gov.sg/api/public/themesvc/retrieveTheme?queryName=${queryName}`;
+      
+      if (extents) {
+        // If not in 'noRadius' mode, add the 'extents' parameter
+        url += `&extents=${extents}`;
+      }
+      
       console.log(`📡 Requesting OneMap Theme: ${queryName}`);
       console.log("🔗 URL:", url);
 
@@ -78,8 +91,12 @@ exports.fetchNearbyThemeFacilities = async (lat, lng, radius = 3000, queryNames 
 /**
  * Fetch public transport route from OneMap API (PT mode)
  */
+/**
+ * Fetch public transport route from OneMap API (PT mode)
+ */
 exports.fetchPublicTransportRoute = async (startLat, startLng, endLat, endLng) => {
   try {
+    // Fetch the token for OneMap API access
     const tokenRes = await fetch("https://www.onemap.gov.sg/api/auth/post/getToken", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -99,7 +116,9 @@ exports.fetchPublicTransportRoute = async (startLat, startLng, endLat, endLng) =
     const date = `${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}-${now.getFullYear()}`;
     const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:00`;
 
+    // Construct the URL for OneMap's public transport route service
     const url = `https://www.onemap.gov.sg/api/public/routingsvc/route?start=${startLat},${startLng}&end=${endLat},${endLng}&routeType=pt&date=${date}&time=${time}&mode=TRANSIT&maxWalkDistance=1000&numItineraries=1`;
+
     console.log("🚇 Requesting route:", url);
 
     const response = await fetch(url, {
@@ -108,12 +127,14 @@ exports.fetchPublicTransportRoute = async (startLat, startLng, endLat, endLng) =
       }
     });
 
+    // Handle the response and ensure it's JSON
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
       const text = await response.text();
       throw new Error("Non-JSON response from OneMap: " + text.slice(0, 100));
     }
 
+    // Parse the JSON data
     const data = await response.json();
 
     if (!response.ok || !data.plan) {
@@ -126,7 +147,8 @@ exports.fetchPublicTransportRoute = async (startLat, startLng, endLat, endLng) =
     }
 
     console.log("✅ Route fetched successfully. # of itineraries:", data.plan.itineraries?.length || 0);
-    return data;
+
+    return data;  // Return the fetched data for use in the frontend
   } catch (err) {
     console.error("❌ Error fetching public transport route:", err.message);
     return {

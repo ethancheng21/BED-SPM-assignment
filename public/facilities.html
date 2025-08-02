@@ -11,11 +11,10 @@
       font-family: 'Segoe UI', Arial, sans-serif;
       display: flex;
       flex-direction: column;
-      height: 100vh; /* Full height of the page */
-      overflow: hidden; /* Prevent scrolling on the body */
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* Navbar styles */
     header {
       padding: 1rem 2rem;
       background-color: #fff;
@@ -23,7 +22,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 10; /* Ensure navbar stays above map */
+      z-index: 10;
     }
 
     .logo {
@@ -43,28 +42,28 @@
       font-weight: 500;
     }
 
-    /* Main content layout */
     .main-container {
       display: flex;
       flex-grow: 1;
-      overflow: hidden; /* Prevent page from scrolling */
+      overflow: hidden;
     }
 
     #map {
       flex: 1;
-      height: calc(100vh - 50px); /* Map fills the space minus the navbar height */
+      height: calc(100vh - 50px);
     }
 
     #sidebar {
-      width: 30vw;
-      height: calc(100vh - 50px); /* Sidebar height adjusted to take full height minus navbar */
-      overflow-y: auto; /* Sidebar should scroll if content overflows */
-      padding: 1rem;
-      background-color: #f4f6f8;
-      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
-      position: relative;
-      z-index: 1;
-    }
+  width: 30vw;
+  height: calc(100vh - 80px); /* Already correct */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 1rem;
+  background-color: #f4f6f8;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
+}
 
     h2 {
       margin-top: 0;
@@ -119,7 +118,6 @@
       pointer-events: none;
     }
 
-    /* 🧽 Clean popup styling */
     .leaflet-popup-content-wrapper {
       background: #0077cc;
       color: white;
@@ -139,19 +137,15 @@
   </style>
 </head>
 <body>
-  <!-- Simplified Navbar -->
   <header>
     <div class="logo">Lions<span style="color:orange;">Befrienders</span></div>
     <nav>
-      <a href="home.html">Home</a> <!-- Link to Home page -->
+      <a href="home.html">Home</a>
     </nav>
   </header>
 
   <div class="main-container">
-    <!-- Map -->
     <div id="map"></div>
-
-    <!-- Sidebar -->
     <div id="sidebar">
       <h2>Nearby Facilities</h2>
       <div id="facilityList">Loading...</div>

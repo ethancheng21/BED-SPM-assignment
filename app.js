@@ -24,31 +24,33 @@ const onemapRoutes = require("./onemap/onemapRoutes");
 const transportRoutes = require("./routes/transportRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const facilityRoutes = require("./routes/facilityRoutes");
+const facilityMapsRoutes = require("./routes/facilityMapsRoutes"); // ✅ Added this line
 const authRoutes = require("./routes/authRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const accessibilityRoutes = require("./routes/accessibilityRoutes");
 const userRoutes = require("./routes/userRoutes");
 const medicationRoutes = require("./routes/medicationRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
-const hobbyRoutes = require("./routes/hobbyRoutes")
+const hobbyRoutes = require("./routes/hobbyRoutes");
 const groupChatRoutes = require("./routes/groupChatRoutes");
 const faqRoutes = require("./routes/faqRoutes");
-const feedbackRoutes = require("./routes/feedbackRoutes")
+const feedbackRoutes = require("./routes/feedbackRoutes");
 
 // Mount all routes under API prefixes
 app.use("/api/onemap", onemapRoutes);
 app.use("/api/transport", transportRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/facilities", facilityRoutes);
+app.use("/api/facilityMaps", facilityMapsRoutes); // ✅ Mounting the facilityMaps route
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api", userRoutes); // Mount userRoutes under /api
 app.use("/api/medications", medicationRoutes);
 app.use("/api/appointments", appointmentRoutes);
-app.use("/api/hobbies",hobbyRoutes)
+app.use("/api/hobbies", hobbyRoutes);
 app.use("/api/groupChat", groupChatRoutes);
 app.use("/api/faqs", faqRoutes);
-app.use("/api/feedback",feedbackRoutes)
+app.use("/api/feedback", feedbackRoutes);
 
 // Test route
 app.get("/", (req, res) => {

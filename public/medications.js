@@ -62,3 +62,9 @@ async function deleteMed(id) {
 }
 
 fetchMeds();
+
+
+function logout() {
+  localStorage.removeItem("userId");
+  window.location.href = "home.html"; // Redirect to public version
+}
