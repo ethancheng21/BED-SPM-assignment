@@ -199,13 +199,18 @@
       const calendarEl = document.getElementById("calendar");
 
       const calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: "dayGridMonth",
-        height: 600,
-        events: await fetchAppointments(),
-        eventClick: function (info) {
-          alert(`${info.event.title}\nNotes: ${info.event.extendedProps.notes || "None"}`);
-        }
-      });
+            initialView: "dayGridMonth",
+            height: 600,
+            events: await fetchAppointments(),
+            eventTimeFormat: {
+                hour: 'numeric',
+                minute: '2-digit',
+                meridiem: 'short'  // forces "AM/PM"
+            },
+            eventClick: function (info) {
+                alert(`${info.event.title}\nNotes: ${info.event.extendedProps.notes || "None"}`);
+            }
+        });
 
       calendar.render();
 
