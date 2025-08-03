@@ -122,9 +122,8 @@ exports.getPublicTransportRoute = async (req, res) => {
     }
 
     const now = new Date();
-    const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
-    const time = now.toTimeString().split(" ")[0]; // HH:MM:SS
-
+    const date = `${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}-${now.getFullYear()}`; // ✅ MM-DD-YYYY
+    const time = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:00`; // ✅ HH:MM:SS 
     const routeUrl = `https://www.onemap.gov.sg/api/public/routingsvc/route?start=${startLat},${startLng}&end=${endLat},${endLng}&routeType=pt&date=${date}&time=${time}&mode=TRANSIT&maxWalkDistance=1000&numItineraries=1`;
 
     const response = await fetch(routeUrl, {
