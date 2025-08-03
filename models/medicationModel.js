@@ -10,7 +10,14 @@ exports.insert = async (data) => {
 
 exports.getByUserId = async (userId) => {
   return db.query(
-    `SELECT * FROM medications WHERE user_id = @userId`,
+    `SELECT 
+       medication_id,
+       name,
+       dosage,
+       instructions,
+       CONVERT(VARCHAR(5), schedule_time, 108) AS schedule_time
+     FROM medications
+     WHERE user_id = @userId`,
     { userId }
   );
 };
