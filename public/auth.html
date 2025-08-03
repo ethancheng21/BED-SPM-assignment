@@ -124,66 +124,62 @@
       background-color: #005b96;
       color: white;
     }
+
     body.dark-mode {
-  background-color: #121212;
-  color: #e0e0e0;
-}
+      background-color: #121212;
+      color: #e0e0e0;
+    }
 
-body.dark-mode .auth-container {
-  background-color: #1e1e1e;
-  color: #e0e0e0;
-}
+    body.dark-mode .auth-container {
+      background-color: #1e1e1e;
+      color: #e0e0e0;
+    }
 
-body.dark-mode input {
-  background-color: #2b2b2b;
-  color: #fff;
-  border: 1px solid #555;
-}
+    body.dark-mode input {
+      background-color: #2b2b2b;
+      color: #fff;
+      border: 1px solid #555;
+    }
 
-body.dark-mode input::placeholder {
-  color: #aaa;
-}
+    body.dark-mode input::placeholder {
+      color: #aaa;
+    }
 
-body.dark-mode label {
-  color: #eee;
-}
+    body.dark-mode label {
+      color: #eee;
+    }
 
-body.dark-mode .toggle-link {
-  color: orange;
-}
+    body.dark-mode .toggle-link {
+      color: orange;
+    }
 
-body.dark-mode .home-link {
-  border-color: orange;
-  color: orange;
-}
+    body.dark-mode .home-link {
+      border-color: orange;
+      color: orange;
+    }
 
-body.dark-mode .home-link:hover {
-  background-color: orange;
-  color: white;
-}
-body.dark-mode header {
-  background-color: #2a2a2a;
-  border-bottom: 1px solid #444;
-}
+    body.dark-mode .home-link:hover {
+      background-color: orange;
+      color: white;
+    }
 
-
+    body.dark-mode header {
+      background-color: #2a2a2a;
+      border-bottom: 1px solid #444;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Logo Header -->
   <header>
-  <div class="logo">
-    <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
-  </div>
-</header>
+    <div class="logo">
+      <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
+    </div>
+  </header>
 
-
-  <!-- Auth Box -->
   <div class="auth-container">
     <h2 id="formTitle">Login</h2>
 
-    <!-- Login Form -->
     <form id="loginForm">
       <label for="loginEmail">Email:</label>
       <input type="email" id="loginEmail" required />
@@ -194,7 +190,6 @@ body.dark-mode header {
       <button type="submit">Login</button>
     </form>
 
-    <!-- Register Form -->
     <form id="registerForm" style="display: none;">
       <label for="registerName">Name:</label>
       <input type="text" id="registerName" required />
@@ -211,7 +206,6 @@ body.dark-mode header {
     <div class="toggle-link" onclick="toggleForm()">Don't have an account? Register</div>
     <div id="message" class="error"></div>
 
-    <!-- Return to Home Button -->
     <div style="text-align: center; margin-top: 1.5rem;">
       <a href="home.html" class="home-link">← Return to Home</a>
     </div>
@@ -223,6 +217,8 @@ body.dark-mode header {
     const formTitle = document.getElementById("formTitle");
     const toggleLink = document.querySelector(".toggle-link");
     const messageDiv = document.getElementById("message");
+
+    const API_BASE_URL = "http://localhost:3000/api/auth"; // CHANGE this if deploying
 
     function toggleForm() {
       const isLoginVisible = loginForm.style.display !== "none";
@@ -238,23 +234,30 @@ body.dark-mode header {
       const email = document.getElementById("loginEmail").value;
       const password = document.getElementById("loginPassword").value;
 
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+      try {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
 
-      const result = await response.json();
-      if (response.ok) {
-        messageDiv.className = "success";
-        messageDiv.textContent = "Login successful! Redirecting...";
-        localStorage.setItem("userId", result.userId);
-        setTimeout(() => {
-          window.location.href = "/home1.html";
-        }, 1000);
-      } else {
+        const result = await response.json();
+
+        if (response.ok) {
+          messageDiv.className = "success";
+          messageDiv.textContent = "Login successful! Redirecting...";
+          localStorage.setItem("jwtToken", result.token);
+          setTimeout(() => {
+            window.location.href = "home1.html";
+          }, 1000);
+        } else {
+          messageDiv.className = "error";
+          messageDiv.textContent = result.message || "Login failed.";
+        }
+      } catch (err) {
         messageDiv.className = "error";
-        messageDiv.textContent = result.message || "Login failed.";
+        messageDiv.textContent = "Error connecting to server.";
+        console.error("Login Error:", err);
       }
     });
 
@@ -264,31 +267,37 @@ body.dark-mode header {
       const email = document.getElementById("registerEmail").value;
       const password = document.getElementById("registerPassword").value;
 
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      });
+      try {
+        const response = await fetch(`${API_BASE_URL}/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password }),
+        });
 
-      const result = await response.json();
-      if (response.ok) {
-        messageDiv.className = "success";
-        messageDiv.textContent = "Registration successful! Please login.";
-        toggleForm();
-      } else {
+        const result = await response.json();
+
+        if (response.ok) {
+          messageDiv.className = "success";
+          messageDiv.textContent = "Registration successful! Please login.";
+          toggleForm();
+        } else {
+          messageDiv.className = "error";
+          messageDiv.textContent = result.message || "Registration failed.";
+        }
+      } catch (err) {
         messageDiv.className = "error";
-        messageDiv.textContent = result.message || "Registration failed.";
+        messageDiv.textContent = "Error connecting to server.";
+        console.error("Register Error:", err);
       }
     });
   </script>
-  <script>
-  // Apply dark mode if stored in localStorage
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark-mode");
-  }
-</script>
 
+  <script>
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+      document.body.classList.add("dark-mode");
+    }
+  </script>
 
 </body>
 </html>

@@ -12,7 +12,7 @@ exports.createMedication = async (req, res) => {
 
 exports.getMedicationsByUser = async (req, res) => {
   try {
-    const result = await Medication.getByUserId(req.params.userId);
+    const result = await Medication.getByUserId(req.userId);
     res.json(result.recordset);
   } catch (err) {
     res.status(500).json({ error: err.message });

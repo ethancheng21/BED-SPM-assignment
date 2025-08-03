@@ -342,6 +342,30 @@ nav a:hover::after {
       cursor: pointer;
       z-index: 999;
     }
+    .slideshow-container {
+  width: 700px;
+  height: 300px;
+  margin: 20px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+.mySlides {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fade-in {
+  animation: fadeEffect 1s ease-in-out;
+}
+
+@keyframes fadeEffect {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
+
   </style>
 </head>
 <body>
@@ -365,9 +389,12 @@ nav a:hover::after {
     </div>
   </header>
 
-  <div class="banner">
-    <img src="/background/healthybanner.jpg" alt="Healthier SG Banner">
+  <div class="slideshow-container">
+    <img class="mySlides" src="images/elderly_singapore_social_needs_part_of_standard_living_feature-1600x899.jpg">
+    <img class="mySlides" src="images/5c377c2f49dd4846979d994c7a48da32.jpg">
+    <img class="mySlides" src="images/feature-spread-cheer-comfort-more-than-30-years-volunteer-singapore.jpeg">
   </div>
+
 
   <div class="services">
     <h2>Health Services</h2>
@@ -510,10 +537,34 @@ nav a:hover::after {
         console.error("Failed to load FAQs:", err);
       }
     }
+    // 🔁 Auto Slideshow with Fade Effect
+let slideIndex = 0;
+
+function showSlides() {
+  const slides = document.getElementsByClassName("mySlides");
+
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+    slides[i].classList.remove("fade-in");
+  }
+
+  slideIndex++;
+  if (slideIndex > slides.length) { slideIndex = 1; }
+
+  const currentSlide = slides[slideIndex - 1];
+  currentSlide.style.display = "block";
+  currentSlide.classList.add("fade-in");
+
+  setTimeout(showSlides, 5000); // slower: every 5s
+}
+
 
     // Apply theme and load FAQs and profile
-    applySavedTheme();
-    loadFaqs();
+  window.onload = function () {
+  applySavedTheme();
+  loadFaqs();
+  showSlides();
+};
   </script>
 
 </body>

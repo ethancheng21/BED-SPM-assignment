@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chat</title>
   <style>
+    /* (Your full CSS stays unchanged here...) */
     html, body {
       margin: 0;
       padding: 0;
@@ -150,7 +151,6 @@
       color: white;
     }
 
-    /* DARK MODE */
     body.dark-mode {
       background-color: #121212;
       color: #e0e0e0;
@@ -233,21 +233,42 @@
   </div>
 
   <script>
-    const userId = localStorage.getItem("userId");
+    function getUserIdFromToken() {
+      const token = localStorage.getItem("jwtToken");
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return payload.userId;
+      } catch (err) {
+        console.error("Invalid token", err);
+        return null;
+      }
+    }
+
+    const token = localStorage.getItem("jwtToken");
+    const userId = getUserIdFromToken();
+    if (!token || !userId) {
+      alert("Please login first.");
+      window.location.href = "/auth.html";
+    }
+
     const friendListDiv = document.getElementById("friendList");
     const chatBox = document.getElementById("chatBox");
     const chatWith = document.getElementById("chatWith");
     let friendId = null;
     let currentButtons = [];
 
-    // Apply dark mode if previously selected
     const theme = localStorage.getItem("theme");
     if (theme === "dark") {
       document.body.classList.add("dark-mode");
     }
 
     async function loadFriends() {
-      const res = await fetch(`/api/friends/${userId}`);
+      const res = await fetch(`/api/friends/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const friends = await res.json();
 
       friends.forEach(friend => {
@@ -268,7 +289,11 @@
 
     async function fetchMessages() {
       if (!userId || !friendId) return;
-      const res = await fetch(`/api/chat/history?user1=${userId}&user2=${friendId}`);
+      const res = await fetch(`/api/chat/history?user1=${userId}&user2=${friendId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       const messages = await res.json();
       chatBox.innerHTML = "";
 
@@ -290,7 +315,10 @@
 
       await fetch("/api/chat/send", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({ sender_id: userId, receiver_id: friendId, content })
       });
 

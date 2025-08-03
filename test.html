@@ -1,28 +1,45 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h2>Test Geolocation</h2>
-    <button onclick="getLoc()">Get Location</button>
-    <p id="out"></p>
-    <script>
-      function getLoc() {
-        navigator.geolocation.getCurrentPosition(
-          pos => {
-            document.getElementById("out").innerText =
-              `✅ Lat: ${pos.coords.latitude}, Lng: ${pos.coords.longitude}`;
-          },
-          err => {
-            document.getElementById("out").innerText =
-              `❌ ERROR: ${err.message}`;
-            console.error("🛑 ERROR:", err);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-          }
-        );
-      }
-    </script>
-  </body>
+<head>
+  <style>
+    .slideshow-container {
+      max-width: 1000px;
+      margin: auto;
+      overflow: hidden;
+    }
+    .mySlides {
+      display: none;
+      width: 100%;
+      animation: fadeEffect 1s ease-in-out;
+    }
+    @keyframes fadeEffect {
+      from { opacity: 0.4; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="slideshow-container">
+  <img class="mySlides" src="https://via.placeholder.com/1000x400?text=Slide+1">
+  <img class="mySlides" src="https://via.placeholder.com/1000x400?text=Slide+2">
+  <img class="mySlides" src="https://via.placeholder.com/1000x400?text=Slide+3">
+</div>
+
+<script>
+let slideIndex = 0;
+function showSlides() {
+  const slides = document.getElementsByClassName("mySlides");
+  for (let i = 0; i < slides.length; i++) {
+    slides[i].style.display = "none";
+  }
+  slideIndex++;
+  if (slideIndex > slides.length) { slideIndex = 1; }
+  slides[slideIndex - 1].style.display = "block";
+  setTimeout(showSlides, 4000);
+}
+showSlides();
+</script>
+
+</body>
 </html>

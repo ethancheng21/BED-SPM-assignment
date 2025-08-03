@@ -1,12 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const hobbyController = require("../controllers/hobbyController");
-const { checkUserLoggedIn } = require("../middlewares/authMiddleware");
+const { authenticateJWT } = require("../middlewares/authMiddleware");
 
+// Public routes
 router.get("/", hobbyController.getAllHobbies);
-router.get("/:id", hobbyController.getHobbyDetails);
-router.post("/:id/join", checkUserLoggedIn, hobbyController.joinHobby);
-router.delete("/:id/leave", checkUserLoggedIn, hobbyController.leaveHobby);
 router.get("/user/:userId", hobbyController.getUserHobbies);
+router.get("/:id", hobbyController.getHobbyDetails);
+
+// Protected routes
+router.post("/:id/join", authenticateJWT, hobbyController.joinHobby);
+router.delete("/:id/leave", authenticateJWT, hobbyController.leaveHobby);
 
 module.exports = router;

@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/medicationController");
+const medicationController = require("../controllers/medicationController");
+const { authenticateJWT } = require("../middlewares/authMiddleware");
 
-router.post("/", controller.createMedication);
-router.get("/user/:userId", controller.getMedicationsByUser);
-router.delete("/:id", controller.deleteMedication);
+// Secure all medication routes with JWT
+router.post("/", authenticateJWT, medicationController.createMedication);
+router.get("/user", authenticateJWT, medicationController.getMedicationsByUser);
+router.delete("/:id", authenticateJWT, medicationController.deleteMedication);
 
 module.exports = router;

@@ -315,9 +315,10 @@
       const res = await fetch(`/api/groupchat/${hobbyId}`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "userId": userId
-        },
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+},
+
         body: JSON.stringify({ content })
       });
 

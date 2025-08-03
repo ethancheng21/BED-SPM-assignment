@@ -15,16 +15,15 @@
     }
 
     header {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: #fff;
-  border-bottom: 1px solid #eee;
-  transition: background-color 0.3s;
-}
-
+      position: relative;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #fff;
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.3s;
+    }
 
     .logo {
       font-size: 1.8rem;
@@ -32,41 +31,37 @@
       color: #005b96;
     }
 
-    /* Center the nav-links in the header */
-.nav-links {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 1.5rem;
-}
+    .nav-links {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 1.5rem;
+    }
 
-/* Style nav links with underline hover */
-.nav-links a {
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  position: relative;
-  padding-bottom: 4px;
-  transition: color 0.2s ease;
-}
+    .nav-links a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      position: relative;
+      padding-bottom: 4px;
+      transition: color 0.2s ease;
+    }
 
-/* Underline animation */
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  left: 0;
-  bottom: 0;
-  background-color: orange;
-  transition: width 0.3s ease;
-}
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      left: 0;
+      bottom: 0;
+      background-color: orange;
+      transition: width 0.3s ease;
+    }
 
-.nav-links a:hover::after {
-  width: 100%;
-}
-
+    .nav-links a:hover::after {
+      width: 100%;
+    }
 
     .action-buttons {
       display: flex;
@@ -116,62 +111,23 @@
       color: #e0e0e0;
     }
 
-    body.dark-mode nav {
-      background-color: #1e1e1e; /* Dark background for the nav */
+    body.dark-mode header {
+      background-color: #1e1e1e;
     }
 
-    body.dark-mode nav a {
-      color: #fff; /* White text color for links */
-    }
-
-    body.dark-mode nav a:hover {
-      color: #f1f1f1; /* Slightly lighter color on hover */
-    }
-
-    body.dark-mode .nav-links {
+    body.dark-mode nav a,
+    body.dark-mode .nav-links a {
       color: white;
     }
 
-    body.dark-mode .service-item,
-    body.dark-mode .programme-card,
-    body.dark-mode .faq-item {
-      background-color: #1e1e1e;
-      color: #eee;
-    }
-
-    body.dark-mode .faq-answer {
-      color: #ccc;
-    }
-
-    body.dark-mode .faq-section {
-      background-color: #1a1a1a;
-    }
-
-    body.dark-mode h2,
-    body.dark-mode .faq-question,
-    body.dark-mode .programme-card h3 {
-      color: orange;
-    }
-
-    /* Profile container in dark mode */
     body.dark-mode .profile-container {
-      background-color: #333; /* Dark background for the profile container */
-      color: #e0e0e0; /* Light text color */
+      background-color: #333;
+      color: #e0e0e0;
     }
 
     body.dark-mode .profile-label {
-      color: #fff; /* Light text color for labels */
+      color: #fff;
     }
-    /* Fix: Make header dark in dark mode */
-      body.dark-mode header {
-    background-color: #1e1e1e;
-  }
-  /* Force nav link text to white in dark mode */
-    body.dark-mode .nav-links a {
-    color: white;
-  }
-
-
   </style>
 </head>
 <body>
@@ -185,11 +141,7 @@
     </div>
     <div class="action-buttons">
       <button id="darkModeToggle" class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
-        <span id="darkIcon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/>
-          </svg>
-        </span>
+        <span id="darkIcon"></span>
       </button>
       <button class="action-btn" onclick="logout()">Logout</button>
     </div>
@@ -206,29 +158,36 @@
   </div>
 
   <script>
-    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("jwtToken");
 
-    if (!userId) {
+    if (!token) {
       alert("You are not logged in.");
       window.location.href = "auth.html";
     }
 
     async function loadProfile() {
       try {
-        const res = await fetch(`/api/auth/profile`, {
-          headers: { userid: userId }
+        const res = await fetch("/api/auth/profile", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
+
+        if (!res.ok) throw new Error("Unauthorized");
+
         const user = await res.json();
         document.getElementById("profileName").textContent = user.name;
         document.getElementById("profileEmail").textContent = user.email;
       } catch (err) {
-        console.error("Failed to load profile", err);
-        alert("Failed to load profile information.");
+        console.error("❌ Failed to load profile:", err);
+        alert("Session expired. Please log in again.");
+        localStorage.removeItem("token");
+        window.location.href = "auth.html";
       }
     }
 
     function logout() {
-      localStorage.removeItem("userId");
+      localStorage.removeItem("jwtToken");
       window.location.href = "auth.html";
     }
 
@@ -252,7 +211,7 @@
       updateDarkIcon(isDark);
     }
 
-    // Apply theme and load profile
+    // Initialize
     applySavedTheme();
     loadProfile();
   </script>

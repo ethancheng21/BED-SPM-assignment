@@ -330,6 +330,30 @@ body.dark-mode .nav-links a:hover {
   background-color: transparent;
   color: orange; /* Optional: Highlight text on hover */
 }
+.slideshow-container {
+  width: 700px;
+  height: 300px;
+  margin: 20px auto;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mySlides {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fade-in {
+  animation: fadeEffect 1s ease-in-out;
+}
+
+@keyframes fadeEffect {
+  from { opacity: 0.4; }
+  to { opacity: 1; }
+}
 
   </style>
 </head>
@@ -337,50 +361,49 @@ body.dark-mode .nav-links a:hover {
 
   <div id="header-placeholder"></div>
 
-<script>
+ <script>
   fetch('header.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('header-placeholder').innerHTML = data;
-    });
-</script>
-
-  <div class="banner">
-    <img src="/background/healthybanner.jpg" alt="Healthier SG Banner">
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('header-placeholder').innerHTML = data;
+    applySavedTheme();  // ✅ Now it runs AFTER #darkIcon exists
+  });
+  </script>
+  <div class="slideshow-container">
+    <img class="mySlides" src="/images/elderly_singapore_social_needs_part_of_standard_living_feature-1600x899.jpg" alt="Slide 1">
+    <img class="mySlides" src="/images/5c377c2f49dd4846979d994c7a48da32.jpg" alt="Slide 2">
+    <img class="mySlides" src="/images/feature-spread-cheer-comfort-more-than-30-years-volunteer-singapore.jpeg" alt="Slide 3">
+    <img src="/images/test.jpg" style="width:300px;" />
   </div>
+
 
   <div class="services">
     <h2>Health Services</h2>
     <div class="service-grid">
-      <a href="hobbies.html" class="service-item" style="text-decoration: none;">Hobbies</a>
-
-      <a href="events.html" class="service-item" style="text-decoration: none;">Events</a>
-      <a href="appointments.html" class="service-item" style="text-decoration: none;">Appointments</a>
-      <a href="chat.html" class="service-item" style="text-decoration: none;">Chat with Friends</a>
-      <a href="medications.html" class="service-item" style="text-decoration: none;">Medications</a>
+      <a href="hobbies.html" class="service-item">Hobbies</a>
+      <a href="events.html" class="service-item">Events</a>
+      <a href="appointments.html" class="service-item">Appointments</a>
+      <a href="chat.html" class="service-item">Chat with Friends</a>
+      <a href="medications.html" class="service-item">Medications</a>
     </div>
-    
   </div>
 
   <section class="programmes">
     <h2>Quick Navigation</h2>
     <div class="programme-grid">
-  <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
-    <h3>Nearby Facilities →</h3>
-    <p>Find clinics, polyclinics, and libraries near you on the map.</p>
-  </a>
-
-  <a href="transport.html" class="programme-card mental" style="text-decoration: none;">
-    <h3>Transport Map →</h3>
-    <p>Find transportation routes to nearby clinics, polyclinics and libraries.</p>
-  </a>
-
-  <a href="facilitiesmap.html" class="programme-card screening" style="text-decoration: none;">
-    <h3>Facility Map →</h3>
-    <p>Enable one-tap navigation to selected facilities from map view.</p>
-  </a>
-</div>
-
+      <a href="facilities.html" class="programme-card diabetes">
+        <h3>Nearby Facilities →</h3>
+        <p>Find clinics, polyclinics, and libraries near you on the map.</p>
+      </a>
+      <a href="transport.html" class="programme-card mental">
+        <h3>Transport Map →</h3>
+        <p>Find transportation routes to nearby clinics, polyclinics and libraries.</p>
+      </a>
+      <a href="facilitiesmap.html" class="programme-card screening">
+        <h3>Facility Map →</h3>
+        <p>Enable one-tap navigation to selected facilities from map view.</p>
+      </a>
+    </div>
   </section>
 
   <div class="faq-section" id="faq">
@@ -397,25 +420,24 @@ body.dark-mode .nav-links a:hover {
       <option value="large">Large</option>
     </select>
     <div style="margin-top: 1rem; text-align: right;">
-      <button onclick="applyFontSize()" style="margin-right: 10px;">Apply</button>
+      <button onclick="applyFontSize()">Apply</button>
       <button onclick="closeFontSizeModal()">Close</button>
     </div>
   </div>
 
-  <!-- Floating Font Size Button -->
   <button id="fontSizeButton" onclick="openFontSizeModal()">A</button>
 
   <script>
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
+    // === LOGIN TOKEN CHECK ===
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
       alert("You must be logged in.");
-      window.location.href = "/auth.html";
+      window.location.href = "auth.html";
     }
-
     function logout() {
-      localStorage.removeItem("userId");
-      window.location.href = "/auth.html";
-    }
+  localStorage.removeItem("jwtToken");
+  window.location.href = "auth.html";
+}
 
     function goToProfile() {
       window.location.href = "viewProfile.html";
@@ -429,8 +451,8 @@ body.dark-mode .nav-links a:hover {
 
     function updateDarkIcon(isDark) {
       const icon = isDark
-        ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="#333" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10"/></svg>`
-        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/></svg>`;
+        ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="#333"><circle cx="12" cy="12" r="10"/></svg>`
+        : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 0112.21 3a7 7 0 1010.08 9.79z"/></svg>`;
       document.getElementById("darkIcon").innerHTML = icon;
     }
 
@@ -494,50 +516,36 @@ body.dark-mode .nav-links a:hover {
       document.body.style.fontSize = scale;
     }
 
-    // Load font size on startup
+    // Load font size and theme
     const savedSize = localStorage.getItem("fontSize") || "medium";
     setFontSize(savedSize);
     document.getElementById("fontSizeSelect").value = savedSize;
+    let slideIndex = 0;
 
-    // Apply theme and load FAQs
-    applySavedTheme();
-    loadFaqs();
-  </script>
-  <script>
-  // Fetch FAQ data from the backend API
-  async function loadFaqs() {
-    try {
-      const res = await fetch("http://localhost:3000/api/faqs");
-      const faqs = await res.json();  // Parse the JSON response
-      const container = document.getElementById("faqContainer");
-      container.innerHTML = "";  // Clear the FAQ container before appending new items
+    function showSlides() {
+      const slides = document.getElementsByClassName("mySlides");
+      console.log("Running showSlides, total slides:", slides.length);
+      for (let i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+        slides[i].classList.remove("fade-in");
+      }
 
-      // Loop through the fetched FAQs and create HTML elements for each
-      faqs.forEach(faq => {
-        const item = document.createElement("div");
-        item.className = "faq-item";
-        item.innerHTML = `
-          <div class="faq-question">${faq.question}</div>
-          <div class="faq-answer">${faq.answer}</div>
-        `;
-        container.appendChild(item);
-      });
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1; }
 
-      // Add event listeners to toggle the display of FAQ answers on click
-      document.querySelectorAll(".faq-item").forEach(item => {
-        item.addEventListener("click", () => {
-          item.classList.toggle("open");
-        });
-      });
-    } catch (err) {
-      console.error("Failed to load FAQs:", err);  // Log any errors
+      const currentSlide = slides[slideIndex - 1];
+      currentSlide.style.display = "block";
+      currentSlide.classList.add("fade-in");
+
+      setTimeout(showSlides, 5000); // 5s delay
     }
-  }
-
-  // Call the loadFaqs function when the page loads
+    document.addEventListener("DOMContentLoaded", function () {
+  applySavedTheme();
   loadFaqs();
-</script>
+  showSlides();
+});
 
-
+  </script>
+  <script src="reminder1.js"></script>
 </body>
 </html>

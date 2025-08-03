@@ -1,15 +1,20 @@
 const { sql, poolPromise } = require("../db");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
 
 // REGISTER
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
 
+
   try {
     const pool = await poolPromise;
     if (!pool) throw new Error("Database connection failed.");
 
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
 
     await pool.request()
       .input("name", sql.VarChar(100), name)
@@ -19,6 +24,7 @@ exports.register = async (req, res) => {
         INSERT INTO users (name, email, password_hash)
         VALUES (@name, @email, @password)
       `);
+
 
     res.status(201).json({ message: "User registered successfully" });
   } catch (err) {
@@ -31,32 +37,44 @@ exports.register = async (req, res) => {
   }
 };
 
-// LOGIN
+
+// LOGIN WITH JWT
 exports.login = async (req, res) => {
   const { email, password } = req.body;
+
 
   try {
     const pool = await poolPromise;
     if (!pool) throw new Error("Database connection failed.");
 
+
     const result = await pool.request()
       .input("email", sql.VarChar(100), email)
-      .query(`
-        SELECT * FROM users WHERE email = @email
-      `);
+      .query(`SELECT * FROM users WHERE email = @email`);
+
 
     const user = result.recordset[0];
+
 
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
+
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    res.json({ message: "Login success", userId: user.user_id });
+
+    const token = jwt.sign(
+      { userId: user.user_id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
+
+
+    res.json({ message: "Login success", token });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({
@@ -67,23 +85,29 @@ exports.login = async (req, res) => {
   }
 };
 
-// VIEW PROFILE
+
+// VIEW PROFILE (Protected)
 exports.getProfile = async (req, res) => {
   const userId = req.userId;
+
 
   try {
     const pool = await poolPromise;
     if (!pool) throw new Error("Database connection failed.");
 
+
     const result = await pool.request()
       .input("userId", sql.Int, userId)
       .query(`SELECT user_id, name, email FROM users WHERE user_id = @userId`);
 
+
     const user = result.recordset[0];
+
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+
 
     res.json(user);
   } catch (err) {
@@ -96,16 +120,20 @@ exports.getProfile = async (req, res) => {
   }
 };
 
-// UPDATE PROFILE
+
+// UPDATE PROFILE (Protected)
 exports.updateProfile = async (req, res) => {
   const userId = req.userId;
   const { name, email, password } = req.body;
+
 
   try {
     const pool = await poolPromise;
     if (!pool) throw new Error("Database connection failed.");
 
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
 
     await pool.request()
       .input("userId", sql.Int, userId)
@@ -118,6 +146,7 @@ exports.updateProfile = async (req, res) => {
         WHERE user_id = @userId
       `);
 
+
     res.json({ message: "Profile updated" });
   } catch (err) {
     console.error("Update profile error:", err);
@@ -128,3 +157,7 @@ exports.updateProfile = async (req, res) => {
     });
   }
 };
+
+
+
+

@@ -157,7 +157,7 @@ nav a:hover::after {
   <header>
     <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
     <nav>
-      <a href="home.html">Home</a>
+      <a href="home1.html">Home</a>
     </nav>
   </header>
 
@@ -168,6 +168,13 @@ nav a:hover::after {
       <div id="facilityList">Loading...</div>
     </div>
   </div>
+  <script>
+  const token = localStorage.getItem("jwtToken");
+  if (!token) {
+    alert("You must be logged in to view this page.");
+    window.location.href = "auth.html";
+  }
+</script>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
@@ -238,7 +245,11 @@ nav a:hover::after {
         .openPopup();
 
       try {
-        const res = await fetch(`http://localhost:3000/api/facilities/nearby?lat=${lat}&lng=${lng}&radius=3000`);
+        const res = await fetch(`http://localhost:3000/api/facilities/nearby?lat=${lat}&lng=${lng}&radius=3000`, {
+    headers: {
+      "Authorization": "Bearer " + localStorage.getItem("jwtToken")
+    }
+  });
         const data = await res.json();
         facilityList.innerHTML = "";
 

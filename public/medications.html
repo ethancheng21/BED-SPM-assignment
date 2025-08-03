@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Medications</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      scroll-behavior: smooth;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 
     body {
       font-family: Arial, sans-serif;
@@ -20,18 +15,14 @@
     }
 
     header {
-      
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 1rem 2rem;
       border-bottom: 1px solid #eee;
-      background-color: inherit;
     }
 
-    .logo {
-      height: 50px;
-    }
+    .logo { height: 50px; }
 
     .nav-links {
       display: flex;
@@ -136,7 +127,6 @@
       cursor: pointer;
     }
 
-    /* Dark mode */
     body.dark-mode {
       background-color: #121212;
       color: #e0e0e0;
@@ -171,24 +161,23 @@
 </head>
 <body>
   <header>
-  <img class="logo" src="background/LB logo.png" alt="Lions Befrienders Logo" />
-  
-  <div class="nav-container">
-    <nav class="nav-links">
-      <a href="home1.html">Home</a>
-      <a href="#faq">FAQ</a>
-      <a href="help-feedback.html">Help</a>
-    </nav>
-  </div>
+    <img class="logo" src="background/LB logo.png" alt="Lions Befrienders Logo" />
 
-  <div class="header-buttons">
-    <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
-      <span id="darkIcon"></span>
-    </button>
-    <a class="action-btn" href="#" onclick="logout()">Logout</a>
-  </div>
-</header>
+    <div class="nav-container">
+      <nav class="nav-links">
+        <a href="home1.html">Home</a>
+        <a href="#faq">FAQ</a>
+        <a href="help-feedback.html">Help</a>
+      </nav>
+    </div>
 
+    <div class="header-buttons">
+      <button class="action-btn" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">
+        <span id="darkIcon"></span>
+      </button>
+      <a class="action-btn" href="#" onclick="logout()">Logout</a>
+    </div>
+  </header>
 
   <h1>Daily Medications</h1>
 
@@ -203,8 +192,12 @@
   <h2>Medications List</h2>
   <ul id="medList"></ul>
 
-  <script src="medications.js"></script>
   <script>
+    function logout() {
+      localStorage.removeItem("jwtToken");
+      window.location.href = "auth.html";
+    }
+
     function toggleDarkMode() {
       const isDark = document.body.classList.toggle("dark-mode");
       localStorage.setItem("theme", isDark ? "dark" : "light");
@@ -225,7 +218,9 @@
       updateDarkIcon(isDark);
     }
 
-    applySavedTheme();
+    applySavedTheme(); // ✅ this is still needed
   </script>
+
+  <script src="medications.js"></script>
 </body>
 </html>

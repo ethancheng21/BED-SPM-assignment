@@ -1,214 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Public Transport Route Finder</title>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
   <style>
-    body {
+    * { box-sizing: border-box; }
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden; /* ✅ Remove scrollbar */
       font-family: 'Segoe UI', Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
     }
-
-    /* Navbar styles */
     header {
       padding: 1rem 2rem;
       background-color: #fff;
       border-bottom: 1px solid #ddd;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
     }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #005b96;
-    }
-
-    nav {
-      display: flex;
-      gap: 1.5rem;
-    }
-
     nav a {
       text-decoration: none;
-      color: #333;
-      font-weight: 500;
+      color: #005b96;
+      font-weight: bold;
+      font-size: 1.2rem;
     }
-
-    /* Main content layout */
     .main-container {
       display: flex;
-      flex-grow: 1;
+      height: calc(100% - 80px);
     }
-
     #map {
-      flex: 1;
+      flex: 2;
       height: 100%;
     }
-
     #sidebar {
-      width: 30vw;
-      height: 100%;
-      overflow-y: auto;
+      flex: 1;
+      max-width: 400px;
       padding: 1rem;
-      background-color: #f4f6f8;
-      box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+      background-color: #f5f5f5;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-left: 1px solid #ddd;
     }
-
     h2 {
-      margin-top: 0;
-      font-size: 1.4rem;
-      color: #333;
+      margin-top: 1rem;
     }
-
-    ul {
-      padding-left: 0;
-      list-style: none;
-    }
-
-    li {
-      background: #fff;
-      border-radius: 10px;
-      margin-bottom: 0.75rem;
-      padding: 0.75rem;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-      font-size: 0.95rem;
-      line-height: 1.5;
-    }
-
     button {
-      display: block;
-      width: 100%;
       padding: 0.6rem 1rem;
       margin: 0.5rem 0;
       font-size: 1rem;
-      font-weight: bold;
+      cursor: pointer;
+      background-color: #005b96;
       color: white;
-      background-color: #0077cc;
       border: none;
       border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
     }
-
-    button:hover:not(:disabled) {
-      background-color: #005fa3;
-      transform: scale(1.02);
+    button:hover {
+      background-color: #004080;
     }
-
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
+    #savedRoutesList button {
+      margin-top: 0.4rem;
     }
-
-    .fade-out {
-      opacity: 0.4;
-      pointer-events: none;
+    #routeNameInput {
+      padding: 0.5rem;
+      width: 100%;
+      font-size: 1rem;
+      margin: 0.5rem 0;
     }
-
-    /* 🧽 Clean popup styling */
-    .leaflet-popup-content-wrapper {
-      background: #0077cc;
-      color: white;
-      font-weight: bold;
-      font-size: 14px;
-      border-radius: 8px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    li {
+      margin-bottom: 0.8rem;
+      list-style: none;
     }
-
-    .leaflet-popup-tip {
-      background: #0077cc;
+    .load-btn {
+      background-color: #0074d9;
     }
-
-    .leaflet-popup-close-button {
-      display: none;
+    .delete-btn {
+      background-color: #d00000;
     }
-    nav a {
-  position: relative;
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  padding-bottom: 4px;
-  transition: color 0.2s ease;
-}
-
-nav a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 2px;
-  width: 0;
-  background-color: orange;
-  transition: width 0.3s ease;
-}
-
-nav a:hover::after {
-  width: 100%;
-}
-
+    .load-btn:hover {
+      background-color: #005bb5;
+    }
+    .delete-btn:hover {
+      background-color: #a60000;
+    }
+    .route-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
   </style>
 </head>
 <body>
-  <!-- Simplified Navbar -->
+
   <header>
     <img src="background/LB logo.png" alt="Lions Befrienders Logo" style="height: 50px;">
-    <nav>
-      <a href="home.html">Home</a> <!-- Link to Home page -->
-    </nav>
+    <nav><a href="home1.html">Home</a></nav>
   </header>
 
   <div class="main-container">
-    <!-- Map -->
     <div id="map"></div>
-
-    <!-- Sidebar -->
     <div id="sidebar">
       <h2>Route Steps</h2>
       <div id="route-instructions"><strong>Click on map to select start and end points.</strong></div>
-      <br>
       <button id="confirmStartBtn" disabled>✅ Confirm Start</button>
       <button id="confirmEndBtn" disabled>✅ Confirm End</button>
       <button id="resetBtn">🔄 Reset Route</button>
+      <hr />
+      <h2>Saved Routes</h2>
+      <input id="routeNameInput" type="text" placeholder="Name this route (e.g. Work)" />
+      <button id="saveRouteBtn" disabled>💾 Save This Route</button>
+      <ul id="savedRoutesList"></ul>
     </div>
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="leaflet.polyline.snakeanim.js"></script>
-
   <script>
-    let startMarker, endMarker, routeLine;
-    let confirmedStart = null, confirmedEnd = null, selecting = "start";
+    const token = localStorage.getItem("jwtToken");
+    if (!token) {
+      alert("Please login first.");
+      window.location.href = "auth.html";
+    }
+
+    const authHeaders = {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    };
 
     const map = L.map("map").setView([1.3521, 103.8198], 12);
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(map);
+
+    let startMarker, endMarker, routeLine;
+    let confirmedStart = null, confirmedEnd = null, selecting = "start";
+    let latestRoute = null;
 
     const confirmStartBtn = document.getElementById("confirmStartBtn");
     const confirmEndBtn = document.getElementById("confirmEndBtn");
     const resetBtn = document.getElementById("resetBtn");
     const instructionsDiv = document.getElementById("route-instructions");
+    const saveBtn = document.getElementById("saveRouteBtn");
+    const nameInput = document.getElementById("routeNameInput");
+    const savedRoutesList = document.getElementById("savedRoutesList");
 
     map.on("click", (e) => {
       const latlng = e.latlng;
       if (selecting === "start") {
         if (startMarker) map.removeLayer(startMarker);
-        startMarker = L.marker(latlng, { draggable: true })
-          .addTo(map)
-          .bindPopup("<b>📍 Start</b>")
-          .openPopup();
+        startMarker = L.marker(latlng).addTo(map).bindPopup("<b>📍 Start</b>").openPopup();
         confirmStartBtn.disabled = false;
       } else {
         if (endMarker) map.removeLayer(endMarker);
-        endMarker = L.marker(latlng, { draggable: true })
-          .addTo(map)
-          .bindPopup("<b>🏁 End</b>")
-          .openPopup();
+        endMarker = L.marker(latlng).addTo(map).bindPopup("<b>🏁 End</b>").openPopup();
         confirmEndBtn.disabled = false;
       }
     });
@@ -234,55 +181,41 @@ nav a:hover::after {
       selecting = "start";
       confirmStartBtn.disabled = true;
       confirmEndBtn.disabled = true;
-      confirmStartBtn.classList.remove("fade-out");
-      confirmEndBtn.classList.remove("fade-out");
       instructionsDiv.innerHTML = "<strong>Click on map to select start and end points.</strong>";
+      saveBtn.disabled = true;
+      latestRoute = null;
     });
 
     async function getRoute() {
       const url = `http://localhost:3000/api/transport/route?startLat=${confirmedStart.lat}&startLng=${confirmedStart.lng}&endLat=${confirmedEnd.lat}&endLng=${confirmedEnd.lng}`;
-
       try {
         const res = await fetch(url);
         const data = await res.json();
 
-        instructionsDiv.innerHTML = "";
-
-        if (data.plan && data.plan.itineraries) {
+        if (data.plan?.itineraries?.length) {
           const legs = data.plan.itineraries[0].legs;
           const routeCoords = [];
 
-          instructionsDiv.innerHTML += `<p><strong>Total Duration:</strong> ~${Math.round(legs.reduce((s, l) => s + l.duration, 0) / 60)} minutes</p>`;
-          instructionsDiv.innerHTML += `<ul>`;
-
+          instructionsDiv.innerHTML = `<p><strong>Duration:</strong> ~${Math.round(legs.reduce((s, l) => s + l.duration, 0) / 60)} minutes</p><ul>`;
           legs.forEach((leg) => {
-            const from = leg.from.name || "Point";
-            const to = leg.to.name || "Point";
+            const from = leg.from.name || "Start";
+            const to = leg.to.name || "End";
             const dist = (leg.distance / 1000).toFixed(2);
             const mode = leg.mode;
             const emoji = mode === "WALK" ? "🚶" : mode === "BUS" ? "🚌" : mode === "SUBWAY" ? "🚇" : "➡️";
-
             instructionsDiv.innerHTML += `<li><strong>${emoji} ${mode}</strong>: ${from} → ${to} (${dist} km)</li>`;
-
             if (leg.legGeometry?.points) {
               routeCoords.push(...decodePolyline(leg.legGeometry.points));
             }
           });
-
           instructionsDiv.innerHTML += "</ul>";
 
           if (routeLine) map.removeLayer(routeLine);
-          routeLine = L.polyline(routeCoords, {
-            color: '#0077cc',
-            weight: 5,
-            opacity: 0.9
-          }).addTo(map);
+          routeLine = L.polyline(routeCoords, { color: "#0077cc", weight: 5 }).addTo(map);
+          map.fitBounds(routeLine.getBounds());
 
-          routeLine.snakeIn();
-          setTimeout(() => map.fitBounds(routeLine.getBounds()), 1000);
-
-          confirmStartBtn.classList.add("fade-out");
-          confirmEndBtn.classList.add("fade-out");
+          latestRoute = { start: confirmedStart, end: confirmedEnd };
+          saveBtn.disabled = false;
         } else {
           instructionsDiv.innerHTML = "<strong>No route found.</strong>";
         }
@@ -307,6 +240,67 @@ nav a:hover::after {
       }
       return coordinates;
     }
+
+    function renderSavedRoutes() {
+      savedRoutesList.innerHTML = "";
+      const routes = JSON.parse(localStorage.getItem("savedRoutes") || "{}")[token] || [];
+      routes.forEach((route, i) => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <strong>${route.name}</strong>
+          <div class="route-buttons">
+            <button class="load-btn" onclick="loadSavedRoute(${i})">🧭 Load</button>
+            <button class="delete-btn" onclick="deleteSavedRoute(${i})">🗑️ Delete</button>
+          </div>
+        `;
+        savedRoutesList.appendChild(li);
+      });
+    }
+
+    window.loadSavedRoute = (index) => {
+      const routes = JSON.parse(localStorage.getItem("savedRoutes") || "{}")[token] || [];
+      const route = routes[index];
+      if (!route) return;
+      resetBtn.click();
+      confirmedStart = route.start;
+      confirmedEnd = route.end;
+      startMarker = L.marker(confirmedStart).addTo(map).bindPopup("<b>📍 Start</b>").openPopup();
+      endMarker = L.marker(confirmedEnd).addTo(map).bindPopup("<b>🏁 End</b>").openPopup();
+      getRoute();
+    };
+
+    window.deleteSavedRoute = (index) => {
+      const routes = JSON.parse(localStorage.getItem("savedRoutes") || "{}");
+      if (!routes[token]) return;
+      routes[token].splice(index, 1);
+      localStorage.setItem("savedRoutes", JSON.stringify(routes));
+      renderSavedRoutes();
+    };
+
+    saveBtn.addEventListener("click", async () => {
+      const name = nameInput.value.trim();
+      if (!name || !latestRoute) return alert("Enter name and confirm route first.");
+      try {
+        await fetch("http://localhost:3000/api/transport/saveRoute", {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify({ route: { name, ...latestRoute } }),
+        });
+        alert("✅ Route saved to server.");
+      } catch (err) {
+        console.error("❌ Failed to save:", err);
+      }
+
+      const routes = JSON.parse(localStorage.getItem("savedRoutes") || "{}");
+      if (!routes[token]) routes[token] = [];
+      routes[token].push({ name, ...latestRoute });
+      localStorage.setItem("savedRoutes", JSON.stringify(routes));
+      nameInput.value = "";
+      saveBtn.disabled = true;
+      renderSavedRoutes();
+    });
+
+    document.addEventListener("DOMContentLoaded", renderSavedRoutes);
   </script>
 </body>
 </html>

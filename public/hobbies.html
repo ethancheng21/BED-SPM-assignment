@@ -4,98 +4,62 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hobby Groups</title>
-
   <style>
-    /* === START of events.css content === */
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff;
-      color: #111;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
-    }
-
-    body {
-      overflow-x: hidden;
-    }
-
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      max-width: 100%;
-    }
+    /* Your CSS remains untouched */
+    body { font-family: Arial, sans-serif; background-color: #fff; color: #111; margin: 0; padding: 0; line-height: 1.6; overflow-x: hidden; }
+    html, body { margin: 0; padding: 0; width: 100%; max-width: 100%; }
 
     header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;  /* instead of 16px 32px */
-    border-bottom: 1px solid #eee;
-    width: 100%;
-    box-sizing: border-box;
-    min-height: 80px;
-  }
-
-
-    header * {
-      line-height: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid #eee;
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 80px;
     }
 
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: #005b96;
+    .logo { font-size: 1.8rem; font-weight: bold; color: #005b96; }
+
+    .nav-links {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
     }
-      .nav-links {
-    flex: 1;
-    display: flex;
-    justify-content: center;  /* center nav links horizontally */
-    gap: 2rem;                /* space between links */
-  }
 
-
-  .nav-links a {
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #333;
-  text-decoration: none;
-  position: relative;
-  padding-bottom: 4px;
-  transition: color 0.3s ease;
-}
-
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  width: 0;
-  height: 2px;
-  bottom: 0;
-  left: 0;
-  background-color: orange;
-  transition: width 0.3s ease;
-}
-
-.nav-links a:hover::after {
-  width: 100%;
-}
-
-
-    .nav-links a:hover {
-      background-color: #f4f4f4;
-      color: #005b96;
+    .nav-links a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+      position: relative;
+      padding-bottom: 4px;
+      transition: color 0.3s ease;
     }
-    body.dark-mode .nav-links a {
-  color: white !important;
-}
 
-body.dark-mode .nav-links a:hover {
-  color: orange !important;
-  background-color: transparent !important;
-}
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 0;
+      background-color: orange;
+      transition: width 0.3s ease;
+    }
 
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-links a:hover { background-color: #f4f4f4; color: #005b96; }
+
+    body.dark-mode .nav-links a { color: white !important; }
+
+    body.dark-mode .nav-links a:hover {
+      color: orange !important;
+      background-color: transparent !important;
+    }
 
     .header-buttons {
       display: flex;
@@ -117,10 +81,7 @@ body.dark-mode .nav-links a:hover {
       justify-content: center;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    h1 { text-align: center; margin-bottom: 30px; }
 
     #hobby-list {
       display: flex;
@@ -141,9 +102,7 @@ body.dark-mode .nav-links a:hover {
       border-radius: 10px;
     }
 
-    .event-card h3 {
-      margin-top: 0;
-    }
+    .event-card h3 { margin-top: 0; }
 
     button {
       margin-top: 10px;
@@ -156,9 +115,7 @@ body.dark-mode .nav-links a:hover {
       color: white;
     }
 
-    .cancel-btn {
-      background-color: #e74c3c;
-    }
+    .cancel-btn { background-color: #e74c3c; }
 
     .modal {
       display: none;
@@ -208,53 +165,14 @@ body.dark-mode .nav-links a:hover {
       font-weight: bold;
     }
 
-    body.dark-mode {
-      background-color: #121212;
-      color: #e0e0e0;
-    }
+    body.dark-mode { background-color: #121212; color: #e0e0e0; }
 
-    body.dark-mode header {
-    background-color: #1e1e1e;
-    border-bottom-color: #444;
-    }
+    body.dark-mode header { background-color: #1e1e1e; border-bottom-color: #444; }
 
+    body.dark-mode .event-card,
+    body.dark-mode .modal-content { background-color: #1e1e1e; color: white; }
 
-    body.dark-mode .nav-links a {
-  color: white;
-}
-
-body.dark-mode .nav-links a:hover {
-  background-color: transparent;
-  color: orange;
-}
-
-body.dark-mode .nav-links a:hover::after {
-  background-color: orange;
-}
-
-
-    body.dark-mode .event-card {
-      background-color: #1e1e1e;
-      color: #eee;
-    }
-
-    body.dark-mode .modal-content {
-      background-color: #1e1e1e;
-      color: #fff;
-    }
-
-    body.dark-mode .close-btn {
-      color: white;
-    }
-    body.dark-mode .nav-links a {
-  color: white !important;
-}
-
-body.dark-mode .nav-links a:hover {
-  color: orange !important;
-  background-color: transparent !important;
-}
-
+    body.dark-mode .close-btn { color: white; }
 
     @media (max-width: 768px) {
       #hobby-list {
@@ -263,9 +181,6 @@ body.dark-mode .nav-links a:hover {
         padding: 0 10px;
       }
     }
-
-    /* === END of events.css content === */
-    
   </style>
 </head>
 
@@ -283,57 +198,45 @@ body.dark-mode .nav-links a:hover {
 
   <div id="header-placeholder"></div>
 
-<script>
- fetch('header.html')
-  .then(response => response.text())
-  .then(data => {
-    document.getElementById('header-placeholder').innerHTML = data;
-
-    // 🩶 After injecting header, re-apply dark mode if needed
-    const storedTheme = localStorage.getItem('theme') || 'light';
-    if (storedTheme === 'dark') {
-      document.body.classList.add('dark-mode');
-    }
-  });
-
-</script>
-
-  <!-- Main Content -->
   <h1>Hobby Groups</h1>
   <div id="hobby-list"></div>
 
-  <!-- JavaScript -->
   <script>
-    const userId = localStorage.getItem("userId");
-    const userName = localStorage.getItem("userName");
+    fetch('header.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById("header-placeholder").innerHTML = html;
+        if (localStorage.getItem("theme") === "dark") {
+          document.body.classList.add("dark-mode");
+        }
+      });
 
-    if (!userId) {
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle("dark-mode");
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = "auth.html";
+    }
+
+    function getUserInfoFromToken() {
+      const token = localStorage.getItem("jwtToken");
+      if (!token) return null;
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        return { userId: payload.userId, userName: payload.name || "User" };
+      } catch {
+        return null;
+      }
+    }
+
+    const userInfo = getUserInfoFromToken();
+    if (!userInfo || !userInfo.userId) {
       alert("Please log in first.");
-      window.location.href = "home.html";
+      window.location.href = "auth.html";
     }
-
-      (function applyStoredTheme() {
-    const storedTheme = localStorage.getItem('theme') || 'light';
-    if (storedTheme === 'dark') {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  })();
-
-  function toggleDarkMode() {
-    const isDark = document.body.classList.toggle('dark-mode');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  }
-
-  function goToProfile() {
-    window.location.href = "viewProfile.html";
-  }
-
-  function logout() {
-    localStorage.clear();
-    window.location.href = "home.html";
-  }
 
     async function fetchHobbies() {
       const res = await fetch("/api/hobbies");
@@ -349,7 +252,7 @@ body.dark-mode .nav-links a:hover {
           <p>${hobby.description}</p>
           <button onclick="joinHobby(${hobby.hobby_id})">Join</button>
           <button onclick="leaveHobby(${hobby.hobby_id})" class="cancel-btn">Leave</button>
-          <button onclick="viewHobbyDetails(${hobby.hobby_id})" class="view-btn">View Details</button>
+          <button onclick="viewHobbyDetails(${hobby.hobby_id})">View Details</button>
         `;
         container.appendChild(card);
       });
@@ -360,9 +263,9 @@ body.dark-mode .nav-links a:hover {
         const res = await fetch(`/api/hobbies/${hobbyId}/join`, {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            "userId": userId
-          }
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+}
         });
         const data = await res.json();
         alert(data.message || "Joined hobby group");
@@ -376,9 +279,9 @@ body.dark-mode .nav-links a:hover {
         const res = await fetch(`/api/hobbies/${hobbyId}/leave`, {
           method: "DELETE",
           headers: {
-            "Content-Type": "application/json",
-            "userId": userId
-          }
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("jwtToken")}`
+      }
         });
         const data = await res.json();
         alert(data.message || "Left hobby group");
@@ -396,16 +299,14 @@ body.dark-mode .nav-links a:hover {
         const memberList = document.getElementById("modal-member-list");
         memberList.innerHTML = "";
 
-        if (hobby.members && hobby.members.length > 0) {
+        if (hobby.members?.length) {
           hobby.members.forEach(member => {
             const li = document.createElement("li");
             li.textContent = `${member.name} (${member.email})`;
             memberList.appendChild(li);
           });
         } else {
-          const li = document.createElement("li");
-          li.textContent = "No members yet.";
-          memberList.appendChild(li);
+          memberList.innerHTML = "<li>No members yet.</li>";
         }
 
         document.getElementById("modal-chat-btn").onclick = () => {
@@ -418,15 +319,15 @@ body.dark-mode .nav-links a:hover {
       }
     }
 
-    window.onclick = function(event) {
-      const modal = document.getElementById("hobby-modal");
-      if (event.target === modal) closeModal();
-    };
-
     function closeModal() {
       document.getElementById("hobby-modal").style.display = "none";
     }
 
+    window.onclick = function (event) {
+      if (event.target === document.getElementById("hobby-modal")) {
+        closeModal();
+      }
+    };
 
     window.onload = fetchHobbies;
   </script>
