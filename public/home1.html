@@ -28,27 +28,42 @@
       color: #005b96;
     }
 
-    .nav-links {
-      flex: 1;
-      display: flex;
-      justify-content: center; /* Center the navigation links */
-      gap: 2rem; /* Space out the links */
-    }
+    /* Light & default appearance */
+.nav-links a {
+  text-decoration: none;
+  color: #111;
+  font-weight: 500;
+  font-size: 1.1rem;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.3s ease;
+}
 
-    .nav-links a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-      font-size: 1.1rem; /* Slightly larger text for better visibility */
-      padding: 0.5rem 1rem;
-      border-radius: 10px;
-      transition: background 0.3s, color 0.3s;
-    }
+/* Animated underline on hover */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  background-color: orange;
+  transition: width 0.3s ease;
+}
 
-    .nav-links a:hover {
-      background-color: #f4f4f4;
-      color: #005b96;
-    }
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+/* Dark mode appearance */
+body.dark-mode .nav-links a {
+  color: white;
+}
+
+body.dark-mode .nav-links a::after {
+  background-color: orange;
+}
+
 
     .header-buttons {
       display: flex;
@@ -226,6 +241,11 @@
       background-color: #121212;
       color: #e0e0e0;
     }
+    /* Ensure nav links appear white in dark mode */
+body.dark-mode .nav-links a {
+  color: white !important;
+}
+
 
     body.dark-mode nav a {
       color: #ffffff;
@@ -237,6 +257,16 @@
       background-color: #1e1e1e;
       color: #eee;
     }
+    body.dark-mode .service-item {
+  background-color: #1e1e1e;
+  color: #eee;
+}
+
+body.dark-mode .service-item:hover {
+  background-color: #2a2a2a;
+  transform: scale(1.05);
+}
+
 
     body.dark-mode .faq-answer {
       color: #ccc;
@@ -329,25 +359,28 @@ body.dark-mode .nav-links a:hover {
       <a href="chat.html" class="service-item" style="text-decoration: none;">Chat with Friends</a>
       <a href="medications.html" class="service-item" style="text-decoration: none;">Medications</a>
     </div>
-    <a class="more-link" href="#faq">→ View FAQs</a>
+    
   </div>
 
   <section class="programmes">
     <h2>Quick Navigation</h2>
     <div class="programme-grid">
-      <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
-        <h3>Nearby Facilities →</h3>
-        <p>Find clinics, polyclinics, and libraries near you on the map.</p>
-      </a>
-      <div class="programme-card mental">
-        <h3>[Placeholder]</h3>
-        <p>You can update this card later with your own link and description.</p>
-      </div>
-      <div class="programme-card screening">
-        <h3>[Placeholder]</h3>
-        <p>You can update this card later with your own link and description.</p>
-      </div>
-    </div>
+  <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
+    <h3>Nearby Facilities →</h3>
+    <p>Find clinics, polyclinics, and libraries near you on the map.</p>
+  </a>
+
+  <a href="transport.html" class="programme-card mental" style="text-decoration: none;">
+    <h3>Transport Map →</h3>
+    <p>Find transportation routes to nearby clinics, polyclinics and libraries.</p>
+  </a>
+
+  <a href="facilitiesmap.html" class="programme-card screening" style="text-decoration: none;">
+    <h3>Facility Map →</h3>
+    <p>Enable one-tap navigation to selected facilities from map view.</p>
+  </a>
+</div>
+
   </section>
 
   <div class="faq-section" id="faq">
@@ -470,6 +503,41 @@ body.dark-mode .nav-links a:hover {
     applySavedTheme();
     loadFaqs();
   </script>
+  <script>
+  // Fetch FAQ data from the backend API
+  async function loadFaqs() {
+    try {
+      const res = await fetch("http://localhost:3000/api/faqs");
+      const faqs = await res.json();  // Parse the JSON response
+      const container = document.getElementById("faqContainer");
+      container.innerHTML = "";  // Clear the FAQ container before appending new items
+
+      // Loop through the fetched FAQs and create HTML elements for each
+      faqs.forEach(faq => {
+        const item = document.createElement("div");
+        item.className = "faq-item";
+        item.innerHTML = `
+          <div class="faq-question">${faq.question}</div>
+          <div class="faq-answer">${faq.answer}</div>
+        `;
+        container.appendChild(item);
+      });
+
+      // Add event listeners to toggle the display of FAQ answers on click
+      document.querySelectorAll(".faq-item").forEach(item => {
+        item.addEventListener("click", () => {
+          item.classList.toggle("open");
+        });
+      });
+    } catch (err) {
+      console.error("Failed to load FAQs:", err);  // Log any errors
+    }
+  }
+
+  // Call the loadFaqs function when the page loads
+  loadFaqs();
+</script>
+
 
 </body>
 </html>

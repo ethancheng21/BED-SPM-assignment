@@ -20,12 +20,48 @@
     }
 
     header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      border-bottom: 1px solid #eee;
-    }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+/* Center nav using absolute positioning */
+nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* Style the nav links and add hover underline */
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  background-color: orange;
+  transition: width 0.3s;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
 
     .logo {
       font-size: 1.8rem;
@@ -33,16 +69,41 @@
       color: #005b96;
     }
 
-    nav {
-      display: flex;
-      gap: 1.5rem;
-    }
+/* Center nav using absolute positioning */
+nav {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 1.5rem;
+}
 
-    nav a {
-      text-decoration: none;
-      color: #333;
-      font-weight: 500;
-    }
+/* Style the links */
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.2s ease;
+}
+
+/* Hover underline effect */
+nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  left: 0;
+  bottom: 0;
+  background-color: orange;
+  transition: width 0.3s ease;
+}
+
+nav a:hover::after {
+  width: 100%;
+}
+
 
     .header-buttons {
       display: flex;
@@ -245,6 +306,7 @@
     body.dark-mode .programme-card h3 {
       color: orange;
     }
+    
 
     /* Font size settings modal */
     #fontSizeModal {
@@ -318,25 +380,28 @@
       <div class="service-item" onclick="alert('Please log in to access Chat with Friends.')">Chat with Friends</div>
       <div class="service-item" onclick="alert('Please log in to Medications')">Medications</div>
     </div>
-    <a class="more-link scroll-to-faq" href="#faq">→ View FAQs</a>
+    
   </div>
 
   <section class="programmes">
     <h2>Quick Navigation</h2>
     <div class="programme-grid">
-      <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
-        <h3>Nearby Facilities →</h3>
-        <p>Find clinics, polyclinics, and libraries near you on the map.</p>
-      </a>
-      <div class="programme-card mental">
-        <h3>[Placeholder]</h3>
-        <p>You can update this card later with your own link and description.</p>
-      </div>
-      <div class="programme-card screening">
-        <h3>[Placeholder]</h3>
-        <p>You can update this card later with your own link and description.</p>
-      </div>
-    </div>
+  <a href="facilities.html" class="programme-card diabetes" style="text-decoration: none;">
+    <h3>Nearby Facilities →</h3>
+    <p>Find clinics, polyclinics, and libraries near you on the map.</p>
+  </a>
+
+  <a href="transport.html" class="programme-card mental" style="text-decoration: none;">
+    <h3>Transport Map →</h3>
+    <p>Find transportation routes to nearby clinics, polyclinics and libraries.</p>
+  </a>
+
+  <a href="facilitiesmap.html" class="programme-card screening" style="text-decoration: none;">
+    <h3>Facility Map →</h3>
+    <p>Enable one-tap navigation to selected facilities from map view.</p>
+  </a>
+</div>
+
   </section>
 
   <div class="faq-section" id="faq">

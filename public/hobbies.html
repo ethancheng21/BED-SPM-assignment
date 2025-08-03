@@ -58,19 +58,44 @@
 
 
   .nav-links a {
-    font-size: 1.1rem;
-    padding: 0.5rem 1rem;
-    font-weight: 500;
-    border-radius: 10px;
-    color: #333;
-    text-decoration: none;
-    transition: background 0.3s, color 0.3s;
-  }
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  position: relative;
+  padding-bottom: 4px;
+  transition: color 0.3s ease;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background-color: orange;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
 
     .nav-links a:hover {
       background-color: #f4f4f4;
       color: #005b96;
     }
+    body.dark-mode .nav-links a {
+  color: white !important;
+}
+
+body.dark-mode .nav-links a:hover {
+  color: orange !important;
+  background-color: transparent !important;
+}
+
 
     .header-buttons {
       display: flex;
@@ -195,13 +220,18 @@
 
 
     body.dark-mode .nav-links a {
-      color: white;
-    }
+  color: white;
+}
 
-    body.dark-mode .nav-links a:hover {
-      background-color: transparent;
-      color: orange;
-    }
+body.dark-mode .nav-links a:hover {
+  background-color: transparent;
+  color: orange;
+}
+
+body.dark-mode .nav-links a:hover::after {
+  background-color: orange;
+}
+
 
     body.dark-mode .event-card {
       background-color: #1e1e1e;
@@ -216,6 +246,15 @@
     body.dark-mode .close-btn {
       color: white;
     }
+    body.dark-mode .nav-links a {
+  color: white !important;
+}
+
+body.dark-mode .nav-links a:hover {
+  color: orange !important;
+  background-color: transparent !important;
+}
+
 
     @media (max-width: 768px) {
       #hobby-list {
@@ -226,6 +265,7 @@
     }
 
     /* === END of events.css content === */
+    
   </style>
 </head>
 
@@ -244,11 +284,18 @@
   <div id="header-placeholder"></div>
 
 <script>
-  fetch('header.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('header-placeholder').innerHTML = data;
-    });
+ fetch('header.html')
+  .then(response => response.text())
+  .then(data => {
+    document.getElementById('header-placeholder').innerHTML = data;
+
+    // 🩶 After injecting header, re-apply dark mode if needed
+    const storedTheme = localStorage.getItem('theme') || 'light';
+    if (storedTheme === 'dark') {
+      document.body.classList.add('dark-mode');
+    }
+  });
+
 </script>
 
   <!-- Main Content -->

@@ -48,19 +48,21 @@
     }
     /* Nav links default */
   .nav-links a {
-    text-decoration: none;
-    color: #333;              /* dark gray in light mode */
-    font-weight: 500;
-    font-size: 1.1rem;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
-    transition: background 0.3s, color 0.3s;
-  }
+  text-decoration: none;
+  color: #111; /* black in light mode */
+  font-weight: 500;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s, color 0.3s;
+}
+
     /* Nav links hover light mode */
   .nav-links a:hover {
-    background-color: #f4f4f4;
-    color: #005b96;           /* blue */
-  }
+  border-bottom: 2px solid orange;
+  color: #111; /* stay black in light mode */
+}
+
     .header-buttons {
       display: flex;
       gap: 0.75rem;
